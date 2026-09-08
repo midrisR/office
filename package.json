@@ -9,10 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.3.4",
     "@prisma/adapter-mariadb": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "antd": "^6.6.3",
     "dotenv": "^17.4.2",
     "next": "16.3.4",
+    "next-cloudinary": "^6.18.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

@@ -87,10 +87,6 @@ model profiles {
   @@index([userId], map: "userId")
 }
 
-model sequelizemeta {
-  name String @id @unique(map: "name") @db.VarChar(255)
-}
-
 model types {
   id        Int      @id @default(autoincrement())
   name      String?  @db.VarChar(255)
@@ -117,6 +113,16 @@ model vendors {
   email     String?   @db.VarChar(255)
   createdAt DateTime? @db.Date
   updatedAt DateTime? @db.Date
+}
+
+model Employes {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String?
+  phone     String?
+  role      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model verification_tokens {
