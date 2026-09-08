@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model brands {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  published Boolean?
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+}
+
+model categories {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  image     String?  @db.VarChar(255)
+  published Boolean?
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+}
+
+model clients {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  address   String?   @db.VarChar(255)
+  contact   String?   @db.VarChar(255)
+  email     String?   @db.VarChar(255)
+  createdAt DateTime? @db.Date
+  updatedAt DateTime? @db.Date
+}
+
+model images {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  productId Int?
+  createdAt DateTime  @db.Date
+  updatedAt DateTime  @db.Date
+  products  products? @relation(fields: [productId], references: [id], onDelete: Cascade, map: "images_ibfk_1")
+
+  @@index([productId], map: "images_ibfk_1")
+}
+
+model offers {
+  id        Int       @id @default(autoincrement())
+  product   String?   @db.VarChar(255)
+  price     String?   @db.VarChar(255)
+  vendorId  Int?
+  date      DateTime? @db.Date
+  createdAt DateTime  @db.Date
+  updatedAt DateTime  @db.Date
+
+  @@index([vendorId], map: "vendorId")
+}
+
+model products {
+  id              Int      @id @default(autoincrement())
+  name            String?  @db.VarChar(255)
+  categorieId     Int?
+  description     String?  @db.Text
+  brandId         Int?
+  tag             String?  @db.VarChar(255)
+  metaDescription String?  @db.Text
+  metaKeywords    String?  @db.VarChar(255)
+  published       Boolean?
+  createdAt       DateTime @db.Date
+  updatedAt       DateTime @db.Date
+  images          images[]
+
+  @@index([brandId], map: "brandId")
+  @@index([categorieId], map: "products_ibfk_1")
+}
+
+model profiles {
+  id        Int      @id @default(autoincrement())
+  address   String?  @db.VarChar(255)
+  phone     Int?
+  userId    Int?
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  users     users?   @relation(fields: [userId], references: [id], onDelete: Cascade, map: "profiles_ibfk_1")
+
+  @@index([userId], map: "userId")
+}
+
+model sequelizemeta {
+  name String @id @unique(map: "name") @db.VarChar(255)
+}
+
+model types {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  published Boolean?
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+}
+
+model users {
+  id        Int        @id @default(autoincrement())
+  name      String?    @db.VarChar(255)
+  email     String?    @db.VarChar(255)
+  password  String?    @db.VarChar(255)
+  createdAt DateTime   @db.Date
+  updatedAt DateTime   @db.Date
+  profiles  profiles[]
+}
+
+model vendors {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  address   String?   @db.VarChar(255)
+  contact   String?   @db.VarChar(255)
+  email     String?   @db.VarChar(255)
+  createdAt DateTime? @db.Date
+  updatedAt DateTime? @db.Date
+}
+
+model verification_tokens {
+  token      String   @id @db.VarChar(255)
+  identifier String   @db.VarChar(255)
+  expires    DateTime @db.DateTime(0)
+}
