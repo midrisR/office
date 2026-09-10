@@ -1,16 +1,41 @@
 "use client";
-import React from "react";
-import { Form, Input, Switch, Button, Tabs, Upload, Space } from "antd";
+
+import { useState, useEffect } from "react";
+import { Form, Input, Switch, Button, Upload, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
-
+const IMAGE_BASE_URL = "/images/item/";
 const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
 
-  // Tab 1: Informasi Dasar Produk
-  const basicInfoTab = (
-    <>
+  useEffect(() => {
+    if (initialValues && initialValues.images) {
+      const initialFileList = initialValues.images.map((image, index) => ({
+        uid: `-${index}`,
+        name: initialValues.name,
+        status: "done",
+        url: `${IMAGE_BASE_URL}/${initialValues.id}/${image.name}`,
+      }));
+      setFileList(initialFileList);
+    }
+  }, []);
+
+  return (
+    <Form
+      form={form}
+      layout="vertical"
+      initialValues={initialValues}
+      onFinish={onFinish}
+      style={{
+        maxWidth: 800,
+        backgroundColor: "#fff",
+        padding: "24px",
+        borderRadius: "8px",
+      }}
+    >
+      {/* Komponen Tabs Ant Design */}
       <Form.Item
         name="name"
         label="Nama Produk"
@@ -34,27 +59,21 @@ const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
       >
         <Switch checkedChildren="Published" unCheckedChildren="Draft" />
       </Form.Item>
-    </>
-  );
-
-  // Tab 2: Upload Gambar
-  const imagesTab = (
-    <Form.Item name="images" label="Gambar Produk" valuePropName="images">
-      <Upload listType="picture-card" beforeUpload={() => false}>
-        <div>
-          <PlusOutlined />
-          <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-      </Upload>
-    </Form.Item>
-  );
-
-  // Tab 3: SEO & Meta Data
-  const seoTab = (
-    <>
+      <Form.Item name="images" label="Gambar Produk" valuePropName="images">
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          beforeUpload={() => false}
+        >
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+          </div>
+        </Upload>
+      </Form.Item>
       <Form.Item name="metaDescription" label="Meta Description (SEO)">
         <TextArea
-          rows={3}
+          rows={2}
           placeholder="Deskripsi ringkas untuk mesin pencari (Google)"
         />
       </Form.Item>
@@ -62,46 +81,14 @@ const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
       <Form.Item name="metaKeywords" label="Meta Keywords (SEO)">
         <Input placeholder="Pisahkan kata kunci dengan koma (misal: sepatu, murah, lari)" />
       </Form.Item>
-    </>
-  );
 
-  // Konfigurasi Item Tabs Ant Design (Versi v5 API)
-  const tabItems = [
-    {
-      key: "1",
-      label: "Informasi Umum",
-      children: basicInfoTab,
-    },
-    {
-      key: "2",
-      label: "Gambar Produk",
-      children: imagesTab,
-    },
-    {
-      key: "3",
-      label: "SEO / Meta",
-      children: seoTab,
-    },
-  ];
-
-  return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={initialValues}
-      onFinish={onFinish}
-    >
-      {/* Komponen Tabs Ant Design */}
-      <Tabs defaultActiveKey="1" items={tabItems} />
-
-      <Space
-        style={{ marginTop: 24, justifyContent: "flex-end", width: "100%" }}
-      >
-        <Button onClick={onCancel}>Batal</Button>
-        <Button type="primary" htmlType="submit">
-          Simpan Perubahan
-        </Button>
-      </Space>
+      <Form.Item label={null}>
+        <Space>
+          <Button type="primary" htmlType="submit">
+            Simpan Perubahan
+          </Button>
+        </Space>
+      </Form.Item>
     </Form>
   );
 };

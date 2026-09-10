@@ -17,8 +17,6 @@ export default function Page() {
       // Panggil API Backend
       const response = await fetch(`/api/products/${id}`);
       const { data } = await response.json();
-      console.log(data);
-
       // Set data produk
       setProduct(data);
     } catch (error) {
