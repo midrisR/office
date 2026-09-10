@@ -33,16 +33,33 @@ model clients {
   createdAt DateTime? @db.Date
   updatedAt DateTime? @db.Date
 }
-
 model images {
   id        Int       @id @default(autoincrement())
   name      String?   @db.VarChar(255)
   productId Int?
-  createdAt DateTime  @db.Date
-  updatedAt DateTime  @db.Date
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   products  products? @relation(fields: [productId], references: [id], onDelete: Cascade, map: "images_ibfk_1")
 
   @@index([productId], map: "images_ibfk_1")
+}
+
+model products {
+  id              Int      @id @default(autoincrement())
+  name            String?  @db.VarChar(255)
+  categorieId     Int?
+  description     String?  @db.Text
+  brandId         Int?
+  tag             String?  @db.VarChar(255)
+  metaDescription String?  @db.Text
+  metaKeywords    String?  @db.VarChar(255)
+  published       Boolean? @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  images          images[]
+
+  @@index([brandId], map: "brandId")
+  @@index([categorieId], map: "products_ibfk_1")
 }
 
 model offers {
@@ -57,23 +74,6 @@ model offers {
   @@index([vendorId], map: "vendorId")
 }
 
-model products {
-  id              Int      @id @default(autoincrement())
-  name            String?  @db.VarChar(255)
-  categorieId     Int?
-  description     String?  @db.Text
-  brandId         Int?
-  tag             String?  @db.VarChar(255)
-  metaDescription String?  @db.Text
-  metaKeywords    String?  @db.VarChar(255)
-  published       Boolean?
-  createdAt       DateTime @db.Date
-  updatedAt       DateTime @db.Date
-  images          images[]
-
-  @@index([brandId], map: "brandId")
-  @@index([categorieId], map: "products_ibfk_1")
-}
 
 model profiles {
   id        Int      @id @default(autoincrement())
