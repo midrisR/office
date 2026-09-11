@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { Form, Input, Switch, Button, Upload, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-
+import Markdown from "./markdown/editor";
 const { TextArea } = Input;
 const IMAGE_BASE_URL = "/images/item/";
+
 const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -21,6 +22,10 @@ const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
       setFileList(initialFileList);
     }
   }, []);
+
+  const handleEditorChange = ({ text }) => {
+    form.setFieldsValue({ description: text });
+  };
 
   return (
     <Form
@@ -49,7 +54,12 @@ const EditProductForm = ({ initialValues, onFinish, onCancel }) => {
       </Form.Item>
 
       <Form.Item name="description" label="Deskripsi Produk">
-        <TextArea rows={4} placeholder="Tuliskan deskripsi lengkap produk" />
+        {/* <TextArea rows={4} placeholder="Tuliskan deskripsi lengkap produk" /> */}
+        <Markdown
+          // value={form.description}
+          handleEditorChange={handleEditorChange}
+          name="description"
+        />
       </Form.Item>
 
       <Form.Item
