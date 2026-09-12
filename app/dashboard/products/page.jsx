@@ -1,95 +1,148 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Table, Tag, Button, Space } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Tag,
+  Button,
+  Space,
+  Popconfirm,
+  message,
+  Input,
+  Flex,
+} from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import Link from "next/link";
 
-export default function Page () {
+export default function Page() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  // 1. Inisialisasi state pagination dengan objek yang lengkap
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0, // PENTING: Antd butuh total data untuk mengaktifkan tombol Next
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+      total: 0,
+    },
   });
 
-  // 2. Fungsi fetch data ke backend
-  const fetchProducts = async (page = 1, pageSize = 10) => {
+  // KOREKSI 1: Ubah urutan parameter menjadi (query, page, limit) agar sesuai dengan cara Anda memanggilnya di bawah
+  const fetchProducts = async (query = "", page = 1, limit = 10) => {
     setLoading(true);
     try {
-      // Panggil API Backend
-      const response = await fetch(`/api/products?page=${page}&limit=${pageSize}`);
+      const response = await fetch(
+        `/api/products?q=${query}&page=${page}&limit=${limit}`,
+      );
       const result = await response.json();
 
-      // Set data produk
       setProducts(result.data);
-
-      // PENTING: Update state pagination dengan data dari backend
-      setPagination({
-        current: page,
-        pageSize: pageSize,
-        total: result.total, // backend HARUS mengembalikan total data (misal: prisma.products.count())
+      setTableParams({
+        pagination: {
+          current: page,
+          pageSize: limit,
+          total: result.total,
+        },
       });
     } catch (error) {
-      console.error('Gagal fetch data:', error);
+      console.error("Gagal fetch data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchProducts(pagination.current, pagination.pageSize);
-  }, []);
+  const handleDeleteProduct = async (productId) => {
+    try {
+      const response = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+      });
 
-  // 3. Handler saat tombol Next / Nomor Halaman diklik
-  const handleTableChange = (newPagination) => {
-    fetchProducts(newPagination.current, newPagination.pageSize);
+      const result = await response.json();
+
+      if (response.ok) {
+        message.success("Produk berhasil dihapus secara permanen!");
+        // KOREKSI 2: Gunakan tableParams.pagination.current dan pertahankan parameter query
+        fetchProducts(
+          searchText,
+          tableParams.pagination.current,
+          tableParams.pagination.pageSize,
+        );
+      } else {
+        message.error(result.error || "Gagal menghapus produk.");
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+      message.error("Gagal terhubung ke server.");
+    }
   };
 
-  // 4. Definisi Kolom Tabel
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchProducts(searchText, 1, tableParams.pagination.pageSize);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchText]);
+
+  const handleTableChange = (pagination) => {
+    fetchProducts(searchText, pagination.current, pagination.pageSize);
+  };
+
   const columns = [
     {
-      title: 'No',
-      key: 'number',
+      title: "No",
+      key: "number",
       width: 70,
-      align: 'center',
+      align: "center",
+      // KOREKSI 3: Gunakan tableParams.pagination karena 'pagination' tidak ada di scope ini
       render: (_, __, index) =>
-        (pagination.current - 1) * pagination.pageSize + index + 1,
+        (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
+        index +
+        1,
     },
     {
-      title: 'Nama Produk',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Nama Produk",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Status',
-      dataIndex: 'published',
-      key: 'published',
+      title: "Status",
+      dataIndex: "published",
+      key: "published",
       render: (published) => (
-        <Tag color={published ? 'green' : 'volcano'}>
-          {published ? 'Published' : 'Draft'}
+        <Tag color={published ? "green" : "volcano"}>
+          {published ? "Published" : "Draft"}
         </Tag>
       ),
     },
     {
-      title: 'Aksi',
-      key: 'action',
+      title: "Aksi",
+      key: "action",
       width: 120,
-      align: 'center',
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Link href={`/dashboard/products/edit/${record.id}`}>
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              size="small"
-            >
+            <Button type="primary" icon={<EditOutlined />} size="small">
               Edit
             </Button>
           </Link>
+          <Popconfirm
+            title="Hapus Produk?"
+            description="Produk dan semua gambar akan terhapus secara permanen. Yakin?"
+            onConfirm={() => handleDeleteProduct(record.id)}
+            okText="Ya, Hapus"
+            cancelText="Batal"
+            okButtonProps={{ danger: true }}
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />}>
+              Hapus
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -97,21 +150,36 @@ export default function Page () {
 
   return (
     <div style={{ padding: 24 }}>
+      <Flex
+        gap="medium"
+        justify="space-between"
+        align="center"
+        style={{ marginBottom: 16 }}
+      >
+        <Link href={`/dashboard/products/create`}>
+          <Button type="primary" style={{ marginBottom: 10 }}>
+            Tambah Produk
+          </Button>
+        </Link>
+        <Input
+          size="large"
+          placeholder="Cari nama produk..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          prefix={<SearchOutlined />}
+          allowClear
+          style={{ width: 300 }}
+        />
+      </Flex>
       <Table
         rowKey="id"
         columns={columns}
         dataSource={products}
         loading={loading}
-        // Kirimkan konfigurasi pagination & handler event-nya
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
-          showSizeChanger: true, // Menampilkan opsi jumlah row per halaman (10, 20, 50)
-        }}
+        pagination={tableParams.pagination}
         onChange={handleTableChange}
         bordered
       />
     </div>
   );
-};
+}

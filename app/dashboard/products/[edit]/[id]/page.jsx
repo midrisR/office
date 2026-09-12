@@ -2,14 +2,11 @@
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import EditProductForm from "@/components/dashboard/products/EditProductForm";
+
 export default function Page() {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-
-  const onFinish = (values) => {
-    console.log("Received values of form:", values);
-  };
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -34,7 +31,7 @@ export default function Page() {
   }
   return (
     <div>
-      <EditProductForm initialValues={product} onFinish={onFinish} />
+      <EditProductForm initialValues={product} />
     </div>
   );
 }

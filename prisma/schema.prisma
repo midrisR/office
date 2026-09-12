@@ -54,8 +54,8 @@ model products {
   metaDescription String?  @db.Text
   metaKeywords    String?  @db.VarChar(255)
   published       Boolean? @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt  DateTime @default(now()) // Tambahkan ini
+  UpdatedAt  DateTime @updatedAt
   images          images[]
 
   @@index([brandId], map: "brandId")
