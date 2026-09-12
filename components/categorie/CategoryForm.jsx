@@ -118,7 +118,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
             position: "absolute",
             display: "flex",
             gap: "4px",
-            background: "rgba(0,0,0,0.2)",
+            background: "rgba(0,0,0,0.)",
             padding: "2px 6px",
             borderRadius: "4px",
           }}
@@ -142,7 +142,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
             okButtonProps={{ danger: true }}
           >
             <DeleteOutlined
-              style={{ color: "#fff", cursor: "pointer", marginLeft: "6px" }}
+              style={{ color: "#ff4d4f", cursor: "pointer", marginLeft: "6px" }}
             />
           </Popconfirm>
         </div>
@@ -177,7 +177,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
             setFileList(newFileList.slice(-1))
           }
           beforeUpload={() => false}
-          itemRender={customItemRender} // <--- Memunculkan kustomisasi preview & popconfirm
+          itemRender={customItemRender}
         >
           {/* Kotak Upload (seperti gambar kedua) akan otomatis muncul jika fileList masih kosong */}
           {fileList.length >= 1 ? null : (
