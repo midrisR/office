@@ -118,7 +118,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
             position: "absolute",
             display: "flex",
             gap: "4px",
-            background: "rgba(0,0,0,0.)",
+            background: "rgba(0,0,0,0.2)",
             padding: "2px 6px",
             borderRadius: "4px",
           }}
@@ -142,7 +142,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
             okButtonProps={{ danger: true }}
           >
             <DeleteOutlined
-              style={{ color: "#ff4d4f", cursor: "pointer", marginLeft: "6px" }}
+              style={{ color: "#fff", cursor: "pointer", marginLeft: "6px" }}
             />
           </Popconfirm>
         </div>

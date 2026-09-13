@@ -13,43 +13,46 @@ export async function GET(request) {
       name: { contains: query },
     };
 
-    const [brands, total] = await prisma.$transaction([
-      prisma.brands.findMany({
+    const [employees, total] = await prisma.$transaction([
+      prisma.employees.findMany({
         where: whereCondition,
         skip: skip,
         take: limit,
         orderBy: { createdAt: "desc" },
+        include: { roleData: true }, // Menarik relasi nama role
       }),
-      prisma.brands.count({
+      prisma.employees.count({
         where: whereCondition,
       }),
     ]);
 
-    return NextResponse.json({ data: brands, total: total }, { status: 200 });
-  } catch (error) {
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
+      { data: employees, total: total },
+      { status: 200 },
     );
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, published } = body;
+    const { name, email, phone, role_id } = body;
 
-    const newBrand = await prisma.brands.create({
+    const newEmploye = await prisma.employees.create({
       data: {
-        name: name,
-        published: published ?? false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        name,
+        email,
+        phone,
+        role_id: role_id ? parseInt(role_id) : null,
       },
     });
 
     return NextResponse.json(
-      { message: "Brand berhasil dibuat", data: newBrand },
+      { message: "Karyawan berhasil dibuat", data: newEmploye },
       { status: 201 },
     );
   } catch (error) {

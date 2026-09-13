@@ -24,15 +24,6 @@ model categories {
   updatedAt DateTime @db.Date
 }
 
-model clients {
-  id        Int       @id @default(autoincrement())
-  name      String?   @db.VarChar(255)
-  address   String?   @db.VarChar(255)
-  contact   String?   @db.VarChar(255)
-  email     String?   @db.VarChar(255)
-  createdAt DateTime? @db.Date
-  updatedAt DateTime? @db.Date
-}
 model images {
   id        Int       @id @default(autoincrement())
   name      String?   @db.VarChar(255)
@@ -40,7 +31,6 @@ model images {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  products? @relation(fields: [productId], references: [id], onDelete: Cascade, map: "images_ibfk_1")
-
   @@index([productId], map: "images_ibfk_1")
 }
 
@@ -54,13 +44,23 @@ model products {
   metaDescription String?  @db.Text
   metaKeywords    String?  @db.VarChar(255)
   published       Boolean? @default(false)
-  createdAt  DateTime @default(now()) // Tambahkan ini
-  UpdatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
   images          images[]
-
   @@index([brandId], map: "brandId")
   @@index([categorieId], map: "products_ibfk_1")
 }
+
+model clients {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  address   String?   @db.VarChar(255)
+  contact   String?   @db.VarChar(255)
+  email     String?   @db.VarChar(255)
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
+}
+
 
 model offers {
   id        Int       @id @default(autoincrement())
@@ -68,31 +68,9 @@ model offers {
   price     String?   @db.VarChar(255)
   vendorId  Int?
   date      DateTime? @db.Date
-  createdAt DateTime  @db.Date
-  updatedAt DateTime  @db.Date
-
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
   @@index([vendorId], map: "vendorId")
-}
-
-
-model profiles {
-  id        Int      @id @default(autoincrement())
-  address   String?  @db.VarChar(255)
-  phone     Int?
-  userId    Int?
-  createdAt DateTime @db.DateTime(0)
-  updatedAt DateTime @db.DateTime(0)
-  users     users?   @relation(fields: [userId], references: [id], onDelete: Cascade, map: "profiles_ibfk_1")
-
-  @@index([userId], map: "userId")
-}
-
-model types {
-  id        Int      @id @default(autoincrement())
-  name      String?  @db.VarChar(255)
-  published Boolean?
-  createdAt DateTime @db.Date
-  updatedAt DateTime @db.Date
 }
 
 model users {
@@ -100,9 +78,8 @@ model users {
   name      String?    @db.VarChar(255)
   email     String?    @db.VarChar(255)
   password  String?    @db.VarChar(255)
-  createdAt DateTime   @db.Date
-  updatedAt DateTime   @db.Date
-  profiles  profiles[]
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
 }
 
 model vendors {
@@ -111,18 +88,28 @@ model vendors {
   address   String?   @db.VarChar(255)
   contact   String?   @db.VarChar(255)
   email     String?   @db.VarChar(255)
-  createdAt DateTime? @db.Date
-  updatedAt DateTime? @db.Date
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
 }
 
-model Employes {
+model Employees {
   id        Int      @id @default(autoincrement())
   name      String?
   email     String?
   phone     String?
-  role      String?
+  role_id   Int?     // Mengganti 'role String?' menjadi foreign key (Int)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  roleData  Roles?   @relation(fields: [role_id], references: [id])
+}
+
+model Roles {
+  id        Int        @id @default(autoincrement())
+  role      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  // Relasi balik (satu Role bisa dimiliki banyak Employes)
+  employees  Employees[]
 }
 
 model verification_tokens {

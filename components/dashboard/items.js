@@ -6,6 +6,7 @@ import {
   PictureOutlined,
   ShopOutlined,
   UserSwitchOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 const items = [
@@ -45,7 +46,12 @@ const items = [
   {
     key: "7",
     icon: <UserSwitchOutlined />,
-    label: <Link href="/dashboard/employees">Employee</Link>,
+    label: <Link href="/dashboard/employees">Employees</Link>,
+  },
+  {
+    key: "78",
+    icon: <TeamOutlined />,
+    label: <Link href="/dashboard/roles">Role</Link>,
   },
 ];
 

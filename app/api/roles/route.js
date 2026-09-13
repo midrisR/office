@@ -10,22 +10,22 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     const whereCondition = {
-      name: { contains: query },
+      role: { contains: query },
     };
 
-    const [brands, total] = await prisma.$transaction([
-      prisma.brands.findMany({
+    const [roles, total] = await prisma.$transaction([
+      prisma.roles.findMany({
         where: whereCondition,
         skip: skip,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
-      prisma.brands.count({
+      prisma.roles.count({
         where: whereCondition,
       }),
     ]);
 
-    return NextResponse.json({ data: brands, total: total }, { status: 200 });
+    return NextResponse.json({ data: roles, total: total }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -37,19 +37,16 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, published } = body;
+    const { role } = body;
 
-    const newBrand = await prisma.brands.create({
+    const newRole = await prisma.roles.create({
       data: {
-        name: name,
-        published: published ?? false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        role: role,
       },
     });
 
     return NextResponse.json(
-      { message: "Brand berhasil dibuat", data: newBrand },
+      { message: "Role berhasil dibuat", data: newRole },
       { status: 201 },
     );
   } catch (error) {

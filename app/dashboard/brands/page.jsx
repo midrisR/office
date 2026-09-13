@@ -18,17 +18,16 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import CategoryForm from "@/components/dashboard/categorie/CategoryForm"; // Sesuaikan path
+import BrandForm from "@/components/dashboard/brand/BrandForm";
 
-export default function CategoryPage() {
-  const [categories, setCategories] = useState([]);
+export default function BrandPage() {
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  // State untuk Modal dan Form
   const [isMounted, setIsMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null); // null = Create, object = Edit
+  const [selectedData, setSelectedData] = useState(null);
 
   const [tableParams, setTableParams] = useState({
     pagination: { current: 1, pageSize: 10, total: 0 },
@@ -38,14 +37,14 @@ export default function CategoryPage() {
     setIsMounted(true);
   }, []);
 
-  const fetchCategories = async (query = "", page = 1, limit = 10) => {
+  const fetchBrands = async (query = "", page = 1, limit = 10) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/categories?q=${query}&page=${page}&limit=${limit}`,
+        `/api/brands?q=${query}&page=${page}&limit=${limit}`,
       );
       const result = await response.json();
-      setCategories(result.data);
+      setBrands(result.data);
       setTableParams({
         pagination: { current: page, pageSize: limit, total: result.total },
       });
@@ -58,21 +57,21 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      fetchCategories(searchText, 1, tableParams.pagination.pageSize);
+      fetchBrands(searchText, 1, tableParams.pagination.pageSize);
     }, 500);
     return () => clearTimeout(delay);
   }, [searchText]);
 
   const handleTableChange = (pagination) => {
-    fetchCategories(searchText, pagination.current, pagination.pageSize);
+    fetchBrands(searchText, pagination.current, pagination.pageSize);
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/brands/${id}`, { method: "DELETE" });
       if (res.ok) {
-        message.success("Kategori dihapus.");
-        fetchCategories(
+        message.success("Brand dihapus.");
+        fetchBrands(
           searchText,
           tableParams.pagination.current,
           tableParams.pagination.pageSize,
@@ -85,22 +84,19 @@ export default function CategoryPage() {
     }
   };
 
-  // Fungsi Pembuka Modal
   const openCreateModal = () => {
-    setSelectedData(null); // Set null agar form bertindak sebagai Create
+    setSelectedData(null);
     setIsModalOpen(true);
   };
 
   const openEditModal = (record) => {
-    setSelectedData(record); // Suntikkan data baris tabel agar form bertindak sebagai Edit
+    setSelectedData(record);
     setIsModalOpen(true);
   };
 
-  // Fungsi Penutup Modal (saat sukses)
   const handleModalSuccess = () => {
     setIsModalOpen(false);
-    // Refresh tabel agar data baru langsung muncul
-    fetchCategories(
+    fetchBrands(
       searchText,
       tableParams.pagination.current,
       tableParams.pagination.pageSize,
@@ -116,7 +112,7 @@ export default function CategoryPage() {
         i +
         1,
     },
-    { title: "Nama Kategori", dataIndex: "name", key: "name" },
+    { title: "Nama Brand", dataIndex: "name", key: "name" },
     {
       title: "Status",
       dataIndex: "published",
@@ -131,7 +127,6 @@ export default function CategoryPage() {
       width: 150,
       render: (_, record) => (
         <Space size="middle">
-          {/* Ubah Link menjadi pemanggil fungsi openEditModal */}
           <Button
             type="primary"
             icon={<EditOutlined />}
@@ -145,15 +140,14 @@ export default function CategoryPage() {
             onConfirm={() => handleDelete(record.id)}
             okText="Ya"
             cancelText="Batal"
+            okButtonProps={{ danger: true }}
           >
             <Button
               type="primary"
               danger
               icon={<DeleteOutlined />}
               size="small"
-            >
-              Hapus
-            </Button>
+            />
           </Popconfirm>
         </Space>
       ),
@@ -173,10 +167,10 @@ export default function CategoryPage() {
           icon={<PlusOutlined />}
           onClick={openCreateModal}
         >
-          Tambah Kategori
+          Tambah Brand
         </Button>
         <Input
-          placeholder="Cari kategori..."
+          placeholder="Cari brand..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           prefix={<SearchOutlined />}
@@ -188,7 +182,7 @@ export default function CategoryPage() {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={categories}
+        dataSource={brands}
         loading={loading}
         pagination={tableParams.pagination}
         onChange={handleTableChange}
@@ -197,13 +191,13 @@ export default function CategoryPage() {
 
       {isMounted && (
         <Modal
-          title={selectedData ? "Edit Kategori" : "Tambah Kategori"}
+          title={selectedData ? "Edit Brand" : "Tambah Brand"}
           open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
-          destroyOnHidden // Wajib ada agar form keriset ulang setiap dibuka
+          destroyOnHidden
         >
-          <CategoryForm
+          <BrandForm
             initialData={selectedData}
             onSuccess={handleModalSuccess}
           />

@@ -4,7 +4,47 @@ import fs from "fs";
 import path from "path";
 
 // ==========================================
-// 1. POST: Membuat Kategori & Upload Gambar
+// 1. GET: Mengambil Data Kategori (dengan Search & Pagination)
+// ==========================================
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("q") || "";
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 20;
+    const skip = (page - 1) * limit;
+
+    const whereCondition = {
+      name: { contains: query },
+    };
+
+    const [categories, total] = await prisma.$transaction([
+      prisma.categories.findMany({
+        where: whereCondition,
+        skip: skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.categories.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    return NextResponse.json(
+      { data: categories, total: total },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Gagal mengambil data kategori:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+// ==========================================
+// 2. POST: Membuat Kategori & Upload Gambar
 // ==========================================
 export async function POST(request) {
   try {
@@ -76,46 +116,6 @@ export async function POST(request) {
     console.error("Error creating category:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error.message },
-      { status: 500 },
-    );
-  }
-}
-
-// ==========================================
-// 2. GET: Mengambil Data Kategori (dengan Search & Pagination)
-// ==========================================
-export async function GET(request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q") || "";
-    const page = parseInt(searchParams.get("page")) || 1;
-    const limit = parseInt(searchParams.get("limit")) || 10;
-    const skip = (page - 1) * limit;
-
-    const whereCondition = {
-      name: { contains: query },
-    };
-
-    const [categories, total] = await prisma.$transaction([
-      prisma.categories.findMany({
-        where: whereCondition,
-        skip: skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.categories.count({
-        where: whereCondition,
-      }),
-    ]);
-
-    return NextResponse.json(
-      { data: categories, total: total },
-      { status: 200 },
-    );
-  } catch (error) {
-    console.error("Gagal mengambil data kategori:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

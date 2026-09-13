@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Table,
-  Tag,
   Button,
   Space,
   Popconfirm,
@@ -11,6 +10,7 @@ import {
   Input,
   Flex,
   Modal,
+  Form,
 } from "antd";
 import {
   EditOutlined,
@@ -18,17 +18,17 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import CategoryForm from "@/components/dashboard/categorie/CategoryForm"; // Sesuaikan path
 
-export default function CategoryPage() {
-  const [categories, setCategories] = useState([]);
+export default function RolePage() {
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  // State untuk Modal dan Form
   const [isMounted, setIsMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null); // null = Create, object = Edit
+  const [selectedData, setSelectedData] = useState(null);
+  const [form] = Form.useForm();
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [tableParams, setTableParams] = useState({
     pagination: { current: 1, pageSize: 10, total: 0 },
@@ -38,14 +38,14 @@ export default function CategoryPage() {
     setIsMounted(true);
   }, []);
 
-  const fetchCategories = async (query = "", page = 1, limit = 10) => {
+  const fetchRoles = async (query = "", page = 1, limit = 10) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/categories?q=${query}&page=${page}&limit=${limit}`,
+        `/api/roles?q=${query}&page=${page}&limit=${limit}`,
       );
       const result = await response.json();
-      setCategories(result.data);
+      setRoles(result.data);
       setTableParams({
         pagination: { current: page, pageSize: limit, total: result.total },
       });
@@ -58,21 +58,21 @@ export default function CategoryPage() {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      fetchCategories(searchText, 1, tableParams.pagination.pageSize);
+      fetchRoles(searchText, 1, tableParams.pagination.pageSize);
     }, 500);
     return () => clearTimeout(delay);
   }, [searchText]);
 
   const handleTableChange = (pagination) => {
-    fetchCategories(searchText, pagination.current, pagination.pageSize);
+    fetchRoles(searchText, pagination.current, pagination.pageSize);
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/roles/${id}`, { method: "DELETE" });
       if (res.ok) {
-        message.success("Kategori dihapus.");
-        fetchCategories(
+        message.success("Role dihapus.");
+        fetchRoles(
           searchText,
           tableParams.pagination.current,
           tableParams.pagination.pageSize,
@@ -85,75 +85,91 @@ export default function CategoryPage() {
     }
   };
 
-  // Fungsi Pembuka Modal
-  const openCreateModal = () => {
-    setSelectedData(null); // Set null agar form bertindak sebagai Create
-    setIsModalOpen(true);
+  const openModal = (record = null) => {
+    setSelectedData(record);
+    setIsModalOpen(true); // 1. Perintahkan modal untuk buka terlebih dahulu
+
+    // 2. Beri jeda 10 milidetik agar <Form> masuk ke dalam DOM
+    setTimeout(() => {
+      if (record) {
+        form.setFieldsValue({ role: record.role });
+      } else {
+        form.resetFields();
+      }
+    }, 10);
   };
 
-  const openEditModal = (record) => {
-    setSelectedData(record); // Suntikkan data baris tabel agar form bertindak sebagai Edit
-    setIsModalOpen(true);
-  };
+  const onFinish = async (values) => {
+    setSubmitLoading(true);
+    const isEditMode = !!selectedData;
+    const apiUrl = isEditMode ? `/api/roles/${selectedData.id}` : "/api/roles";
+    const apiMethod = isEditMode ? "PUT" : "POST";
 
-  // Fungsi Penutup Modal (saat sukses)
-  const handleModalSuccess = () => {
-    setIsModalOpen(false);
-    // Refresh tabel agar data baru langsung muncul
-    fetchCategories(
-      searchText,
-      tableParams.pagination.current,
-      tableParams.pagination.pageSize,
-    );
+    try {
+      const response = await fetch(apiUrl, {
+        method: apiMethod,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        message.success(
+          `Role berhasil ${isEditMode ? "diperbarui" : "dibuat"}!`,
+        );
+        setIsModalOpen(false);
+        fetchRoles(
+          searchText,
+          tableParams.pagination.current,
+          tableParams.pagination.pageSize,
+        );
+      } else {
+        message.error("Gagal menyimpan data.");
+      }
+    } catch (error) {
+      message.error("Terjadi kesalahan jaringan.");
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   const columns = [
     {
       title: "No",
       width: 70,
+      align: "center",
       render: (_, __, i) =>
         (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
         i +
         1,
     },
-    { title: "Nama Kategori", dataIndex: "name", key: "name" },
-    {
-      title: "Status",
-      dataIndex: "published",
-      render: (pub) => (
-        <Tag color={pub ? "green" : "volcano"}>
-          {pub ? "Published" : "Draft"}
-        </Tag>
-      ),
-    },
+    { title: "Nama Role", dataIndex: "role", key: "role" },
     {
       title: "Aksi",
       width: 150,
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
-          {/* Ubah Link menjadi pemanggil fungsi openEditModal */}
           <Button
             type="primary"
             icon={<EditOutlined />}
             size="small"
-            onClick={() => openEditModal(record)}
+            onClick={() => openModal(record)}
           >
             Edit
           </Button>
           <Popconfirm
-            title="Hapus?"
+            title="Hapus Role?"
             onConfirm={() => handleDelete(record.id)}
             okText="Ya"
             cancelText="Batal"
+            okButtonProps={{ danger: true }}
           >
             <Button
               type="primary"
               danger
               icon={<DeleteOutlined />}
               size="small"
-            >
-              Hapus
-            </Button>
+            />
           </Popconfirm>
         </Space>
       ),
@@ -171,12 +187,12 @@ export default function CategoryPage() {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={openCreateModal}
+          onClick={() => openModal()}
         >
-          Tambah Kategori
+          Tambah Role
         </Button>
         <Input
-          placeholder="Cari kategori..."
+          placeholder="Cari role..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           prefix={<SearchOutlined />}
@@ -188,7 +204,7 @@ export default function CategoryPage() {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={categories}
+        dataSource={roles}
         loading={loading}
         pagination={tableParams.pagination}
         onChange={handleTableChange}
@@ -197,16 +213,31 @@ export default function CategoryPage() {
 
       {isMounted && (
         <Modal
-          title={selectedData ? "Edit Kategori" : "Tambah Kategori"}
+          title={selectedData ? "Edit Role" : "Tambah Role"}
           open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
-          destroyOnHidden // Wajib ada agar form keriset ulang setiap dibuka
+          destroyOnHidden
         >
-          <CategoryForm
-            initialData={selectedData}
-            onSuccess={handleModalSuccess}
-          />
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              name="role"
+              label="Nama Role"
+              rules={[{ required: true, message: "Nama role wajib diisi" }]}
+            >
+              <Input placeholder="Masukkan nama role (misal: Admin, Staff)" />
+            </Form.Item>
+            <Form.Item style={{ marginTop: 24, marginBottom: 0 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitLoading}
+                block
+              >
+                {selectedData ? "Simpan Perubahan" : "Buat Role"}
+              </Button>
+            </Form.Item>
+          </Form>
         </Modal>
       )}
     </div>
