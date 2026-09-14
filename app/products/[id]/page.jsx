@@ -23,9 +23,8 @@ export async function generateMetadata({ params, searchParams }, parent) {
 
   return {
     title: `${data.name} | PStore`,
-    description: data.ProductDetailmetaDescription,
+    description: data.metaDescription,
     keywords: data.metaKeywords || data.tag || data.name,
-
     // Open Graph (Tampilan preview saat link di-share ke WA, Facebook, LinkedIn, dll)
     openGraph: {
       title: data.name,

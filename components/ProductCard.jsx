@@ -4,7 +4,6 @@ import Link from "next/link";
 export default function ProductCard({ product }) {
   // Mengambil gambar pertama dari array images
   const primaryImage = product?.images?.[0];
-  console.log(product);
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">

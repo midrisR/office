@@ -33,7 +33,7 @@ export default async function Page({ searchParams }) {
   const totalProducts = response.pagination?.total || response.total;
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div style={{ padding: "24px" }} className="bg-gray-50">
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <h2 className="mb-6 text-2xl font-bold tracking-tight text-gray-900">
           Katalog Produk

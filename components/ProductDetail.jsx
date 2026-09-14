@@ -42,7 +42,8 @@ export default function ProductDetail({ product }) {
                 alt={product.name}
                 fill
                 priority
-                sizes="(max-width: 1024px)  , 50vw"
+                loading="eager"
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center"
               />
             ) : (
@@ -62,14 +63,15 @@ export default function ProductDetail({ product }) {
                   <button
                     key={img.id || index}
                     onClick={() => setSelectedImage(img)}
-                    className={`relative aspect-square h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                    className={`relative aspect-square h-20 w-20 overflow-hidden rounded-lg border-2 transition-all ${
                       isSelected
                         ? "border-blue-600 ring-2 ring-blue-600/20"
                         : "border-gray-200 opacity-70 hover:opacity-100"
                     }`}
                   >
                     <Image
-                      src={`${IMAGE_BASE_URL}/${product.id}/${selectedImage.name}`}
+                      loading="eager"
+                      src={`${IMAGE_BASE_URL}/${product.id}/${img.name}`}
                       alt={`${product.name} thumbnail ${index + 1}`}
                       fill
                       sizes="80px"
@@ -123,7 +125,7 @@ export default function ProductDetail({ product }) {
       {/* 2. TAB DETAILED INFORMASI (DESKRIPSI / SPESIFIKASI HTML) */}
       <div className="mt-16 border-gray-200 pt-8">
         {/* Navigation Tabs */}
-        <div className="flex gap-8 border-b border-gray-200">
+        <div className="flex gap-8 border-b border-gray-200 text-black">
           <p>Deskripsi Lengkap</p>
         </div>
 
@@ -133,7 +135,7 @@ export default function ProductDetail({ product }) {
             {/* Opsi A: Menggunakan dangerouslySetInnerHTML jika ingin mempertahankan format HTML dari backend */}
             <div
               dangerouslySetInnerHTML={{ __html: product.description }}
-              className="space-y-2 [&_span]:!font-sans [&_span]:!text-sm"
+              className="space-y-2"
             />
           </div>
         </div>
