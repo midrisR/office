@@ -3,6 +3,18 @@ const IMAGE_BASE_URL = "/images/item";
 import Link from "next/link";
 export default function ProductCard({ product }) {
   // Mengambil gambar pertama dari array images
+
+  function slugify(text) {
+    if (!text) return "";
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-") // Ganti spasi dengan -
+      .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
+      .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
+  }
+
   const primaryImage = product?.images?.[0];
 
   return (
@@ -11,16 +23,23 @@ export default function ProductCard({ product }) {
       <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
         {primaryImage ? (
           <Image
-            src={`${IMAGE_BASE_URL}/${product.id}/${primaryImage.name}`}
+            src={
+              `${IMAGE_BASE_URL}/${product.id}/${primaryImage.name}` ||
+              "/600x400.svg"
+            }
             alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-            No Image
-          </div>
+          <Image
+            src="/600x400.svg"
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+          />
         )}
       </div>
 
@@ -33,7 +52,7 @@ export default function ProductCard({ product }) {
         {/* Tombol Aksi */}
         <div className="mt-4 pt-2">
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${product.id}/${slugify(product.name)}`}
             className="w-full block rounded-lg bg-blue-600 px-4 py-2 text-center text-xs font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
           >
             Lihat Detail

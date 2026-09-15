@@ -19,7 +19,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
   const imageUrl = primaryImage?.url || primaryImage?.name || "/default-og.jpg";
 
   // Bersihkan meta description (gunakan metaDescription jika ada, fallback ke description)
-  const rawDescription = data.metaDescription || data.description;
+  // const rawDescription = data.metaDescription || data.description;
 
   return {
     title: `${data.name} | PStore`,
