@@ -7,10 +7,9 @@ export default async function Page({ searchParams }) {
   const page = parseInt(params?.page || "1", 10);
   const limit = parseInt(params?.limit || "20", 10);
   const query = params?.q || "";
-  const skip = (page - 1) * limit;
 
   const { products, totalProduct } = await getProducts({
-    skip,
+    page,
     limit,
     query,
   });

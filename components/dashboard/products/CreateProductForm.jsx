@@ -15,6 +15,7 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "./markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
 import { createProducts } from "@/services/productServices";
+
 const { TextArea } = Input;
 
 const CreateProductForm = () => {
@@ -22,7 +23,7 @@ const CreateProductForm = () => {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
-
+  const [validate, setValidate] = useState(null);
   const getAllBrands = async () => {
     try {
       const response = await fetch("/api/brands");
@@ -99,16 +100,12 @@ const CreateProductForm = () => {
     });
 
     try {
-      // Lakukan fetch POST ke endpoint API create
-      // const response = await fetch("/api/products", {
-      //   method: "POST",
-      //   body: formData, // Tanpa header Content-Type, browser yang akan mengaturnya
-      // });
-
       const response = await createProducts(formData);
+
+      console.log(response);
+
       if (response.success) {
         console.log(response);
-
         message.success("Produk berhasil ditambahkan!");
         form.resetFields(); // Kosongkan form setelah sukses
         setFileList([]); // Kosongkan daftar gambar
@@ -116,7 +113,6 @@ const CreateProductForm = () => {
         console.log("error");
       }
     } catch (error) {
-      console.error("Error submit form:", error);
       message.error("Terjadi kesalahan pada server.");
     } finally {
       setLoading(false);
@@ -138,11 +134,7 @@ const CreateProductForm = () => {
         borderRadius: "8px",
       }}
     >
-      <Form.Item
-        name="name"
-        label="Nama Produk"
-        rules={[{ required: true, message: "Nama produk wajib diisi" }]}
-      >
+      <Form.Item name="name" label="Nama Produk">
         <Input placeholder="Masukkan nama produk" />
       </Form.Item>
 

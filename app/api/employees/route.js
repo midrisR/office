@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
+import { employessVAlidation } from "@/validation/employess";
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -41,7 +41,18 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const { name, email, phone, role_id } = body;
+    const { error } = employessVAlidation(body);
+    if (error) {
+      // Siapkan object kosong
+      const err = {};
+      // Isi object tersebut menggunakan forEach
+      error.details.forEach((detail) => {
+        // detail.path[0] berisi nama field (misal: 'name' atau 'email')
+        err[detail.path[0]] = detail.message;
+      });
 
+      return NextResponse.json({ error: err }, { status: 422 });
+    }
     const newEmploye = await prisma.employees.create({
       data: {
         name,
@@ -52,13 +63,10 @@ export async function POST(request) {
     });
 
     return NextResponse.json(
-      { message: "Karyawan berhasil dibuat", data: newEmploye },
+      { message: "Karyawan berhasil dibuat", data: newEmploye, success: true },
       { status: 201 },
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

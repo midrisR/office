@@ -31,7 +31,7 @@ export default function EmployePage() {
   const [selectedData, setSelectedData] = useState(null);
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState(false);
-
+  const [error, setError] = useState(null);
   const [tableParams, setTableParams] = useState({
     pagination: { current: 1, pageSize: 10, total: 0 },
   });
@@ -133,7 +133,7 @@ export default function EmployePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
+      const result = await response.json();
       if (response.ok) {
         message.success(
           `Karyawan berhasil ${isEditMode ? "diperbarui" : "dibuat"}!`,
@@ -145,9 +145,13 @@ export default function EmployePage() {
           tableParams.pagination.pageSize,
         );
       } else {
+        setError(result.error);
+        console.log("Error Validasi Backend:", result.error);
         message.error("Gagal menyimpan data.");
       }
-    } catch {
+    } catch (error) {
+      console.log(error);
+
       message.error("Terjadi kesalahan jaringan.");
     } finally {
       setSubmitLoading(false);
@@ -244,7 +248,10 @@ export default function EmployePage() {
         <Modal
           title={selectedData ? "Edit Karyawan" : "Tambah Karyawan"}
           open={isModalOpen}
-          onCancel={() => setIsModalOpen(false)}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setError(null);
+          }}
           footer={null}
           destroyOnHidden
         >
@@ -252,21 +259,37 @@ export default function EmployePage() {
             <Form.Item
               name="name"
               label="Nama Lengkap"
-              rules={[{ required: true, message: "Nama wajib diisi" }]}
+              help={error?.["name"]}
+              validateStatus={error?.["name"] && "error"}
+              hasFeedback
             >
               <Input placeholder="Masukkan nama lengkap" />
             </Form.Item>
             <Form.Item
               name="email"
               label="Alamat Email"
-              rules={[{ type: "email", message: "Format email tidak valid" }]}
+              help={error?.["email"]}
+              validateStatus={error?.["email"] && "error"}
+              hasFeedback
             >
               <Input placeholder="Masukkan alamat email" />
             </Form.Item>
-            <Form.Item name="phone" label="Nomor Telepon">
+            <Form.Item
+              name="phone"
+              label="Nomor Telepon"
+              help={error?.["phone"]}
+              validateStatus={error?.["phone"] && "error"}
+              hasFeedback
+            >
               <Input placeholder="Masukkan nomor telepon" />
             </Form.Item>
-            <Form.Item name="role_id" label="Jabatan (Role)">
+            <Form.Item
+              name="role_id"
+              label="Jabatan (Role)"
+              help={error?.["role_id"]}
+              validateStatus={error?.["role_id"] && "error"}
+              hasFeedback
+            >
               <Select placeholder="Pilih jabatan" allowClear>
                 {roles.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
