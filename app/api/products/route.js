@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
 // GET: /api/Products
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") || "";

@@ -1,18 +1,9 @@
 import ProductDetail from "@/components/ProductDetail";
+import { getDetailProduct } from "@/services/productServices";
 export async function generateMetadata({ params, searchParams }, parent) {
   const { id } = await params;
-
+  const data = await getDetailProduct(id);
   // fetch post information
-  const { data } = await fetch(`http://localhost:3000/api/products/${id}`).then(
-    (res) => res.json(),
-  );
-
-  if (!data) {
-    return {
-      title: "Produk Tidak Ditemukan",
-      description: "Halaman produk yang Anda cari tidak tersedia.",
-    };
-  }
 
   // Ambil URL gambar pertama untuk Open Graph preview
   const primaryImage = data.images?.[0];
@@ -48,14 +39,12 @@ export async function generateMetadata({ params, searchParams }, parent) {
       images: [imageUrl],
     },
   };
-  s;
 }
 
 export default async function ProductDetailPage({ params }) {
   // Contoh data dari Prisma/Backend milikmu
   const { id } = await params;
-  const res = await fetch(`http://localhost:3000/api/products/${id}`);
-  const { data } = await res.json();
+  const data = await getDetailProduct(id);
 
   return (
     <main className="bg-white py-6">

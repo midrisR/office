@@ -17,6 +17,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
+import { deleteProductByID, getProducts } from "@/services/productServices";
 
 export default function Page() {
   const [products, setProducts] = useState([]);
@@ -35,17 +36,18 @@ export default function Page() {
   const fetchProducts = async (query = "", page = 1, limit = 10) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `/api/products?q=${query}&page=${page}&limit=${limit}`,
-      );
-      const result = await response.json();
+      const { products, totalProduct } = await getProducts({
+        page,
+        limit,
+        query,
+      });
 
-      setProducts(result.data);
+      setProducts(products);
       setTableParams({
         pagination: {
           current: page,
           pageSize: limit,
-          total: result.total,
+          total: totalProduct,
         },
       });
     } catch (error) {
@@ -57,13 +59,9 @@ export default function Page() {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: "DELETE",
-      });
+      const response = await deleteProductByID(productId);
 
-      const result = await response.json();
-
-      if (response.ok) {
+      if (response.success) {
         message.success("Produk berhasil dihapus secara permanen!");
         // KOREKSI 2: Gunakan tableParams.pagination.current dan pertahankan parameter query
         fetchProducts(
@@ -72,7 +70,8 @@ export default function Page() {
           tableParams.pagination.pageSize,
         );
       } else {
-        message.error(result.error || "Gagal menghapus produk.");
+        message.error("Gagal menghapus produk.");
+        console.log(response);
       }
     } catch (error) {
       console.error("Terjadi kesalahan:", error);

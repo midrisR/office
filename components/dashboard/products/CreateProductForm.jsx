@@ -14,10 +14,10 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "./markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
-
+import { createProducts } from "@/services/productServices";
 const { TextArea } = Input;
 
-const CreateProductForm = ({ brands, categories }) => {
+const CreateProductForm = () => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -100,18 +100,20 @@ const CreateProductForm = ({ brands, categories }) => {
 
     try {
       // Lakukan fetch POST ke endpoint API create
-      const response = await fetch("/api/products", {
-        method: "POST",
-        body: formData, // Tanpa header Content-Type, browser yang akan mengaturnya
-      });
+      // const response = await fetch("/api/products", {
+      //   method: "POST",
+      //   body: formData, // Tanpa header Content-Type, browser yang akan mengaturnya
+      // });
 
-      if (response.ok) {
+      const response = await createProducts(formData);
+      if (response.success) {
+        console.log(response);
+
         message.success("Produk berhasil ditambahkan!");
         form.resetFields(); // Kosongkan form setelah sukses
         setFileList([]); // Kosongkan daftar gambar
       } else {
-        const errorData = await response.json();
-        message.error(errorData.error || "Gagal menambahkan produk.");
+        console.log("error");
       }
     } catch (error) {
       console.error("Error submit form:", error);

@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "./markdown/editor";
+import { updateProductByID } from "@/services/productServices";
 const { TextArea } = Input;
 const IMAGE_BASE_URL = "/images/item/";
 
@@ -43,12 +44,12 @@ const EditProductForm = ({ initialValues }) => {
       }
     });
     // Lakukan fetch ke API dengan method PUT
-    const response = await fetch(`/api/products/${initialValues.id}`, {
-      method: "PUT",
-      body: formData, // Jangan set header Content-Type secara manual, biarkan browser mengaturnya untuk FormData
+    const response = await updateProductByID({
+      id: initialValues.id,
+      formData,
     });
 
-    if (response.ok) {
+    if (response.success) {
       message.success("Produk berhasil diperbarui!");
     } else {
       message.error(errorData.error || "Gagal memperbarui produk.");

@@ -3,11 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 const IMAGE_BASE_URL = "/images/item";
-// Helper untuk membersihkan tag HTML dari string deskripsi
-function stripHtml(htmlString) {
-  if (!htmlString) return "";
-  return htmlString.replace(/<[^>]*>?/gm, "").replace(/&nbsp;/g, " ");
-}
+import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 export default function ProductDetail({ product }) {
   // State untuk gambar aktif di galeri
@@ -132,11 +129,9 @@ export default function ProductDetail({ product }) {
         {/* Tab Content */}
         <div className="py-6">
           <div className="prose max-w-none text-sm leading-relaxed text-gray-700">
-            {/* Opsi A: Menggunakan dangerouslySetInnerHTML jika ingin mempertahankan format HTML dari backend */}
-            <div
-              dangerouslySetInnerHTML={{ __html: product.description }}
-              className="space-y-2"
-            />
+            <Markdown rehypePlugins={[rehypeRaw]}>
+              {product.description}
+            </Markdown>
           </div>
         </div>
       </div>

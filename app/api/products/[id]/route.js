@@ -143,7 +143,6 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
     const productId = parseInt(id);
-    console.log("ID produk yang akan dihapus:", params);
     // 1. Cek apakah produk ada di database, sekaligus ambil data gambarnya
     const existingProduct = await prisma.products.findUnique({
       where: { id: productId },
