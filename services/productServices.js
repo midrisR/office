@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
 import { productValidation } from "@/validation/productValidation";
+import { log } from "console";
+
 // GET ALL PRODUCTS
 export async function getProducts({ page, limit, query }) {
   const skip = (page - 1) * limit;
@@ -78,7 +80,6 @@ export async function createProducts(formData) {
       name,
       tag,
       description,
-      published,
       metaDescription,
       metaKeywords,
       categorieId,
@@ -93,12 +94,12 @@ export async function createProducts(formData) {
       error.details.forEach((detail) => {
         formattedErrors[detail.path[0]] = detail.message;
       });
-      console.log(formattedErrors);
       // Kembalikan format balasan yang seragam (success: false)
+
       return {
         success: false,
         message: "Validasi gagal",
-        validationErrors: formattedErrors,
+        error: formattedErrors,
       };
     }
 

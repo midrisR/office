@@ -23,7 +23,7 @@ const CreateProductForm = () => {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
-  const [validate, setValidate] = useState(null);
+  const [validate, setValidate] = useState([]);
   const getAllBrands = async () => {
     try {
       const response = await fetch("/api/brands");
@@ -80,7 +80,7 @@ const CreateProductForm = () => {
     const formData = new FormData();
 
     // 1. Masukkan data teks ke FormData
-    formData.append("name", values.name);
+    formData.append("name", values.nam || "");
     formData.append("tag", values.tag || "");
     formData.append("description", values.description || "");
     // Konversi nilai boolean menjadi string untuk dikirim via FormData
@@ -89,8 +89,8 @@ const CreateProductForm = () => {
     formData.append("metaKeywords", values.metaKeywords || "");
 
     // Tambahan jika Anda menggunakan input untuk relasi kategori/brand
-    if (values.categorieId) formData.append("categorieId", values.categorieId);
-    if (values.brandId) formData.append("brandId", values.brandId);
+    formData.append("categorieId", values.categorieId || "");
+    formData.append("brandId", values.brandId || "");
 
     // 2. Masukkan file gambar fisik ke FormData
     fileList.forEach((file) => {
@@ -102,14 +102,12 @@ const CreateProductForm = () => {
     try {
       const response = await createProducts(formData);
 
-      console.log(response);
-
       if (response.success) {
-        console.log(response);
         message.success("Produk berhasil ditambahkan!");
         form.resetFields(); // Kosongkan form setelah sukses
         setFileList([]); // Kosongkan daftar gambar
       } else {
+        setValidate(response.error);
         console.log("error");
       }
     } catch (error) {
@@ -134,18 +132,37 @@ const CreateProductForm = () => {
         borderRadius: "8px",
       }}
     >
-      <Form.Item name="name" label="Nama Produk">
+      <Form.Item
+        name="name"
+        label="Nama Produk"
+        help={validate?.["name"]}
+        validateStatus={validate?.["name"] && "error"}
+        hasFeedback
+      >
         <Input placeholder="Masukkan nama produk" />
       </Form.Item>
 
-      <Form.Item name="tag" label="Tag Produk">
+      <Form.Item
+        name="tag"
+        label="Tag Produk"
+        help={validate?.["tag"]}
+        validateStatus={validate?.["tag"] && "error"}
+        hasFeedback
+      >
         <Input placeholder="Contoh: Elektronik, Diskon, Sepatu" />
       </Form.Item>
 
       {/* --- BAGIAN SELECT KATEGORI DAN BRAND --- */}
       <Flex gap={12} vertical>
         <Flex gap={8}>
-          <Form.Item name="categorieId" label="Kategori" style={{ flex: 1 }}>
+          <Form.Item
+            name="categorieId"
+            label="Kategori"
+            style={{ flex: 1 }}
+            help={validate?.["categorieId"]}
+            validateStatus={validate?.["categorieId"] && "error"}
+            hasFeedback
+          >
             <Select
               showSearch={{
                 filterOption: (input, option) =>
@@ -161,7 +178,14 @@ const CreateProductForm = () => {
             />
           </Form.Item>
 
-          <Form.Item name="brandId" label="Brand" style={{ flex: 1 }}>
+          <Form.Item
+            name="brandId"
+            label="Brand"
+            style={{ flex: 1 }}
+            help={validate?.["brandId"]}
+            validateStatus={validate?.["brandId"] && "error"}
+            hasFeedback
+          >
             <Select
               showSearch // Mengaktifkan fitur ketik untuk mencari
               placeholder="Pilih Brand"
@@ -174,7 +198,13 @@ const CreateProductForm = () => {
         </Flex>
       </Flex>
 
-      <Form.Item name="description" label="Deskripsi Produk">
+      <Form.Item
+        name="description"
+        label="Deskripsi Produk"
+        help={validate?.["description"]}
+        validateStatus={validate?.["description"] && "error"}
+        hasFeedback
+      >
         <Markdown handleEditorChange={handleEditorChange} name="description" />
       </Form.Item>
 
@@ -200,14 +230,26 @@ const CreateProductForm = () => {
         </Upload>
       </Form.Item>
 
-      <Form.Item name="metaDescription" label="Meta Description (SEO)">
+      <Form.Item
+        name="metaDescription"
+        label="Meta Description (SEO)"
+        help={validate?.["metaDescription"]}
+        validateStatus={validate?.["metaDescription"] && "error"}
+        hasFeedback
+      >
         <TextArea
           rows={2}
           placeholder="Deskripsi ringkas untuk mesin pencari (Google)"
         />
       </Form.Item>
 
-      <Form.Item name="metaKeywords" label="Meta Keywords (SEO)">
+      <Form.Item
+        name="metaKeywords"
+        label="Meta Keywords (SEO)"
+        help={validate?.["metaKeywordsemail"]}
+        validateStatus={validate?.["metaKeywords"] && "error"}
+        hasFeedback
+      >
         <Input placeholder="Pisahkan kata kunci dengan koma (misal: sepatu, murah, lari)" />
       </Form.Item>
 
