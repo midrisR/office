@@ -1,4 +1,10 @@
 import Joi from "joi";
+const ALLOWED_IMAGE_FORMATS = [
+  "image/jpeg",
+  "image/png",
+  "image/jpg",
+  "image/webp",
+];
 export function productValidation(data) {
   const schema = Joi.object({
     name: Joi.string().min(5).max(225).required().messages({
@@ -40,6 +46,32 @@ export function productValidation(data) {
       "string.empty": "tag cannot be an empty field",
       "any.required": "active is a required field",
     }),
+    images: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required(),
+          size: Joi.number()
+            .max(2 * 1024 * 1024)
+            .messages({
+              "number.max":
+                "Ukuran gambar terlalu besar. Maksimal upload adalah 2MB.",
+            }),
+
+          // 2. Terapkan validasi format di sini
+          type: Joi.string()
+            .valid(...ALLOWED_IMAGE_FORMATS)
+            .required()
+            .messages({
+              "any.only":
+                "Format gambar ditolak! Hanya diperbolehkan format JPG, PNG, atau WEBP.",
+              "any.required": "Tipe file tidak terdeteksi.",
+            }),
+        }),
+      )
+      .min(1)
+      .messages({
+        "array.min": "image is a required field",
+      }),
   });
   return schema.validate(data, { abortEarly: false });
 }

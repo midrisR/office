@@ -75,6 +75,15 @@ export async function createProducts(formData) {
     // Konversi ke Integer atau null agar sesuai dengan tipe data Joi & Prisma
     const categorieId = formData.get("categorieId");
     const brandId = formData.get("brandId");
+    const rawFiles = formData.getAll("images");
+
+    const imageFileData = rawFiles
+      .filter((file) => typeof file === "object" && file.size > 0)
+      .map((file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      }));
 
     const body = {
       name,
@@ -84,7 +93,10 @@ export async function createProducts(formData) {
       metaKeywords,
       categorieId,
       brandId,
+      images: imageFileData,
     };
+
+    const { images, ...productData } = body;
 
     // 1. Validasi Joi
     const { error } = productValidation(body);
@@ -105,7 +117,7 @@ export async function createProducts(formData) {
 
     // 2. Simpan produk ke database
     const product = await prisma.products.create({
-      data: body, // Bisa langsung pakai body karena tipenya sudah sesuai (Int/null)
+      ...productData,
     });
 
     // 3. Siapkan direktori folder

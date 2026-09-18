@@ -80,7 +80,7 @@ const CreateProductForm = () => {
     const formData = new FormData();
 
     // 1. Masukkan data teks ke FormData
-    formData.append("name", values.nam || "");
+    formData.append("name", values.name || "");
     formData.append("tag", values.tag || "");
     formData.append("description", values.description || "");
     // Konversi nilai boolean menjadi string untuk dikirim via FormData
@@ -101,6 +101,7 @@ const CreateProductForm = () => {
 
     try {
       const response = await createProducts(formData);
+      console.log(response);
 
       if (response.success) {
         message.success("Produk berhasil ditambahkan!");
@@ -216,8 +217,14 @@ const CreateProductForm = () => {
         <Switch checkedChildren="Published" unCheckedChildren="Draft" />
       </Form.Item>
 
-      <Form.Item label="Gambar Produk">
+      <Form.Item
+        label="Gambar Produk"
+        help={validate?.["images"]}
+        validateStatus={validate?.["images"] && "error"}
+        hasFeedback
+      >
         <Upload
+          name="images"
           listType="picture-card"
           fileList={fileList}
           onChange={({ fileList: newFileList }) => setFileList(newFileList)}
