@@ -61,15 +61,25 @@ model clients {
   UpdatedAt DateTime @default(now()) @updatedAt
 }
 
+model vendors {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(255)
+  address   String?   @db.VarChar(255)
+  contact   String?   @db.VarChar(255)
+  email     String?   @db.VarChar(255)
+  createdAt  DateTime @default(now())
+  UpdatedAt DateTime @default(now()) @updatedAt
+}
 
-model offers {
+
+model quotations {
   id        Int       @id @default(autoincrement())
   product   String?   @db.VarChar(255)
   price     String?   @db.VarChar(255)
   vendorId  Int?
   date      DateTime? @db.Date
-  createdAt  DateTime @default(now())
-  UpdatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
+  UpdatedAt DateTime  @default(now()) @updatedAt
   @@index([vendorId], map: "vendorId")
 }
 
@@ -78,16 +88,6 @@ model users {
   name      String?    @db.VarChar(255)
   email     String?    @db.VarChar(255)
   password  String?    @db.VarChar(255)
-  createdAt  DateTime @default(now())
-  UpdatedAt DateTime @default(now()) @updatedAt
-}
-
-model vendors {
-  id        Int       @id @default(autoincrement())
-  name      String?   @db.VarChar(255)
-  address   String?   @db.VarChar(255)
-  contact   String?   @db.VarChar(255)
-  email     String?   @db.VarChar(255)
   createdAt  DateTime @default(now())
   UpdatedAt DateTime @default(now()) @updatedAt
 }

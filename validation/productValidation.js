@@ -15,15 +15,13 @@ export function productValidation(data) {
         "name length must be less than or equal to {#limit} characters long",
       "any.required": "name is a required field",
     }),
-    categorieId: Joi.string().required().messages({
-      "strings.base": "should be a type of text",
-      "string.empty": "categorie cannot be an empty field",
-      "any.required": "categorie is a required field",
+    categorieId: Joi.number().integer().required().messages({
+      "number.base": "Kategori harus berupa angka",
+      "any.required": "Kategori wajib dipilih",
     }),
-    brandId: Joi.string().required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "brand cannot be an empty field",
-      "any.required": "brand is a required field",
+    brandId: Joi.number().integer().required().messages({
+      "number.base": "Brand harus berupa angka",
+      "any.required": "Brand wajib dipilih",
     }),
     description: Joi.string().required().messages({
       "string.base": "should be a type of text",
@@ -40,7 +38,7 @@ export function productValidation(data) {
       "string.empty": "keywords cannot be an empty field",
       "any.required": "keywords is a required field",
     }),
-
+    published: Joi.boolean().optional(),
     tag: Joi.string().required().messages({
       "string.base": "should be a type of text",
       "string.empty": "tag cannot be an empty field",

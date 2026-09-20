@@ -1,18 +1,30 @@
 import ProductPagination from "@/components/ProductPagination";
 import ProductCard from "@/components/ProductCard";
-import { getProducts } from "@/services/productServices";
+
+async function fetchProducts({ page, limit, query }) {
+  try {
+    // Panggil API Backend
+    const response = await fetch(
+      `http://localhost:3000/api/products?q=${query}&page=${page}&limit=${limit}`,
+    );
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default async function Page({ searchParams }) {
   const params = await searchParams;
   const page = parseInt(params?.page || "1", 10);
   const limit = parseInt(params?.limit || "20", 10);
   const query = params?.q || "";
-
-  const { products, totalProduct } = await getProducts({
+  const { products, totalProduct } = await fetchProducts({
     page,
     limit,
     query,
   });
+  console.log(products);
 
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">

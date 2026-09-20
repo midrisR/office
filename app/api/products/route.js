@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { productValidation } from "@/validation/productValidation";
 import fs from "fs";
 import path from "path";
-// GET: /api/Products
 
+// GET: /api/Products
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") || "";
   try {
     // 1. Ambil URL & query parameter ?page=X&limit=Y
     const { searchParams } = new URL(request.url);
-
+    const isDashboard = searchParams.get("isDashboard") === "true";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "1", 10);
     const skip = (page - 1) * limit;
@@ -20,6 +21,9 @@ export async function GET(request) {
         contains: query,
       },
     };
+    if (!isDashboard) {
+      whereCondition.published = true;
+    }
     // 2. Query data produk dan total count sekaligus
     const [products, totalProduct] = await prisma.$transaction([
       prisma.products.findMany({
@@ -44,10 +48,10 @@ export async function GET(request) {
 
     // 3. Kembalikan response JSON
     return NextResponse.json({
-      data: products,
-      total: totalProduct,
-      page: page,
-      limit: limit,
+      products,
+      totalProduct,
+      page,
+      limit,
     });
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -62,7 +66,6 @@ export async function POST(request) {
   try {
     // 1. UBAH INI: Tangkap data sebagai FormData, bukan JSON
     const formData = await request.formData();
-
     // 2. Ekstrak data teks menggunakan .get()
     const name = formData.get("name");
     const tag = formData.get("tag");
@@ -72,19 +75,49 @@ export async function POST(request) {
     const metaKeywords = formData.get("metaKeywords");
     const categorieId = formData.get("categorieId");
     const brandId = formData.get("brandId");
+    const rawFiles = formData.getAll("images");
 
+    const imageFileData = rawFiles
+      .filter((file) => typeof file === "object" && file.size > 0)
+      .map((file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      }));
+
+    const body = {
+      name,
+      tag,
+      description,
+      metaDescription,
+      published,
+      metaKeywords,
+      categorieId: categorieId ? parseInt(categorieId) : null,
+      brandId: brandId ? parseInt(brandId) : null,
+      images: imageFileData,
+    };
+
+    const { images, ...productData } = body;
+    console.log(body);
+
+    const { error } = productValidation(body);
+    if (error) {
+      // Ubah error Joi menjadi object biasa agar bisa dikirim ke frontend
+      const formattedErrors = {};
+      error.details.forEach((detail) => {
+        formattedErrors[detail.path[0]] = detail.message;
+      });
+      return NextResponse.json(
+        {
+          message: "Validasi gagal",
+          error: formattedErrors,
+        },
+        { status: 422 },
+      );
+    }
     // 3. Simpan produk ke database TERLEBIH DAHULU untuk mendapatkan ID baru
     const newProduct = await prisma.products.create({
-      data: {
-        name,
-        tag,
-        description,
-        published,
-        metaDescription,
-        metaKeywords,
-        categorieId: categorieId ? parseInt(categorieId) : null,
-        brandId: brandId ? parseInt(brandId) : null,
-      },
+      data: { ...productData },
     });
 
     // 4. Siapkan direktori folder berdasarkan ID produk yang baru saja dibuat
@@ -129,13 +162,11 @@ export async function POST(request) {
         data: imageRecords,
       });
     }
-
     return NextResponse.json(
       { message: "Produk berhasil dibuat", data: newProduct },
       { status: 201 },
     );
   } catch (error) {
-    console.error("Database error:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error.message },
       { status: 500 },

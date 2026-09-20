@@ -14,7 +14,6 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "./markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
-import { createProducts } from "@/services/productServices";
 
 const { TextArea } = Input;
 
@@ -24,6 +23,7 @@ const CreateProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
   const [validate, setValidate] = useState([]);
+
   const getAllBrands = async () => {
     try {
       const response = await fetch("/api/brands");
@@ -100,7 +100,12 @@ const CreateProductForm = () => {
     });
 
     try {
-      const response = await createProducts(formData);
+      // const response = await createProducts(formData);
+      const resutlt = await fetch("/api/products", {
+        method: "POST",
+        body: formData, // Tanpa header Content-Type, browser yang akan mengaturnya
+      });
+      const response = await resutlt.json();
       console.log(response);
 
       if (response.success) {
@@ -253,7 +258,7 @@ const CreateProductForm = () => {
       <Form.Item
         name="metaKeywords"
         label="Meta Keywords (SEO)"
-        help={validate?.["metaKeywordsemail"]}
+        help={validate?.["metaKeywords"]}
         validateStatus={validate?.["metaKeywords"] && "error"}
         hasFeedback
       >

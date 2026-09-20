@@ -1,25 +1,24 @@
 import ProductDetail from "@/components/ProductDetail";
-import { getDetailProduct } from "@/services/productServices";
-export async function generateMetadata({ params, searchParams }, parent) {
-  const { id } = await params;
-  const data = await getDetailProduct(id);
-  // fetch post information
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+
+  const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`);
+  const { data } = await response.json();
   // Ambil URL gambar pertama untuk Open Graph preview
   const primaryImage = data.images?.[0];
-  const imageUrl = primaryImage?.url || primaryImage?.name || "/default-og.jpg";
-
+  const imageUrl = `${process.env.IMAGE_BASE_URL}${id}/${primaryImage?.name}`;
   // Bersihkan meta description (gunakan metaDescription jika ada, fallback ke description)
-  // const rawDescription = data.metaDescription || data.description;
+  const rawDescription = data.metaDescription || data.description;
 
   return {
     title: `${data.name} | PStore`,
-    description: data.metaDescription,
+    description: rawDescription,
     keywords: data.metaKeywords || data.tag || data.name,
     // Open Graph (Tampilan preview saat link di-share ke WA, Facebook, LinkedIn, dll)
     openGraph: {
       title: data.name,
-      description: data.metaDescription,
+      description: rawDescription,
       type: "article",
       images: [
         {
@@ -35,7 +34,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
     twitter: {
       card: "summary_large_image",
       title: data.name,
-      description: data.metaDescription,
+      description: rawDescription,
       images: [imageUrl],
     },
   };
@@ -44,7 +43,8 @@ export async function generateMetadata({ params, searchParams }, parent) {
 export default async function ProductDetailPage({ params }) {
   // Contoh data dari Prisma/Backend milikmu
   const { id } = await params;
-  const data = await getDetailProduct(id);
+  const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`);
+  const { data } = await response.json();
 
   return (
     <main className="bg-white py-6">

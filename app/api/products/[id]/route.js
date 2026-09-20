@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { productValidation } from "@/validation/productValidation";
+
 import fs from "fs";
 import path from "path";
 
@@ -57,7 +59,7 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const formData = await request.formData();
 
-    // Ambil data teks
+    // 1. Ambil data teks
     const name = formData.get("name");
     const tag = formData.get("tag");
     const description = formData.get("description");
@@ -65,62 +67,107 @@ export async function PUT(request, { params }) {
     const metaDescription = formData.get("metaDescription");
     const metaKeywords = formData.get("metaKeywords");
 
-    // Tentukan direktori folder tujuan: public/images/item/[id]
+    // Parse foreign key
+    const rawCatId = formData.get("categorieId");
+    const rawBrandId = formData.get("brandId");
+    const categorieId =
+      rawCatId && rawCatId !== "null" ? parseInt(rawCatId) : null;
+    const brandId =
+      rawBrandId && rawBrandId !== "null" ? parseInt(rawBrandId) : null;
+
+    // 2. Persiapkan data gambar untuk validasi Joi
+    const newFiles = formData.getAll("newImages");
+    const existingImagesUrl = formData.getAll("keptImages");
+
+    // Ekstrak file fisik baru
+    const newImageFileData = newFiles
+      .filter((file) => typeof file === "object" && file.size > 0)
+      .map((file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      }));
+
+    // Trik Validasi: Buat objek "dummy" untuk gambar lama agar lolos Joi
+    const existingImagesData = existingImagesUrl.map((url) => ({
+      name: path.basename(url),
+      size: 1024,
+      type: "image/jpeg",
+    }));
+
+    // Gabungkan gambar lama dan baru hanya untuk mengecek total keseluruhan (validasi)
+    const combinedImages = [...existingImagesData, ...newImageFileData];
+
+    // 3. Susun body utuh untuk divalidasi
+    const body = {
+      name,
+      tag,
+      description,
+      published,
+      metaDescription,
+      metaKeywords,
+      categorieId,
+      brandId,
+      images: combinedImages,
+    };
+
+    // Pisahkan 'published' khusus untuk Joi agar tidak error "not allowed"
+    const { published: pub, ...dataToValidate } = body;
+
+    // Jalankan validasi
+    const { error } = productValidation(dataToValidate);
+
+    // 4. Tangkap dan kirim error Joi (Status 422)
+    if (error) {
+      const formattedErrors = {};
+      error.details.forEach((detail) => {
+        formattedErrors[detail.path[0]] = detail.message;
+      });
+      return NextResponse.json({ error: formattedErrors }, { status: 422 });
+    }
+
+    // ==========================================
+    // JIKA LOLOS VALIDASI, LANJUTKAN PROSES BACA/TULIS FILE
+    // ==========================================
+
     const uploadDir = path.join(process.cwd(), `public/images/item/${id}`);
 
-    // Buat foldernya secara otomatis jika belum ada
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // Ambil file baru yang di-upload
-    const newFiles = formData.getAll("newImages");
     const processedImages = [];
 
-    // 1. Simpan file fisik baru ke folder public
+    // Tulis file fisik baru ke folder
     for (const file of newFiles) {
-      if (typeof file === "object" && file.name) {
+      if (typeof file === "object" && file.size > 0) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Buat nama file unik untuk menghindari bentrok nama
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         const ext = path.extname(file.name);
         const fileName = `${uniqueSuffix}${ext}`;
-
         const filePath = path.join(uploadDir, fileName);
 
-        // Tulis file ke disk
         fs.writeFileSync(filePath, buffer);
 
-        // Masukkan HANYA NAMA FILE-NYA saja ke array untuk database
+        // HANYA GAMBAR BARU yang dimasukkan ke array untuk database
         processedImages.push({ name: fileName });
       }
     }
 
-    // 2. Tangani juga gambar lama yang ingin dipertahankan (jika ada sistemnya)
-    const existingImagesUrl = formData.getAll("existingImages");
+    // 5. Update database
+    // Ekstrak images agar array custom tidak ikut terkirim ke Prisma
+    const { images, ...productData } = body;
 
-    existingImagesUrl.forEach((url) => {
-      const fileName = path.basename(url); // Ambil nama file dari URL lama
-      processedImages.push({ name: fileName });
-    });
-
-    // 3. Update database menggunakan Prisma & Nested Write
     const updatedProduct = await prisma.products.update({
       where: { id: parseInt(id) },
       data: {
-        name,
-        tag,
-        description,
-        published,
-        metaDescription,
-        metaKeywords,
+        ...productData,
+        // Prisma HANYA akan membuat baris baru untuk gambar yang baru diunggah
         images: {
           create: processedImages.map((img) => ({
-            name: img.name, // HANYA NAMA FILE YANG MASUK KE DATABASE
-            // createdAt: new Date(),
-            // updatedAt: new Date(),
+            name: img.name,
           })),
         },
       },
@@ -138,7 +185,6 @@ export async function PUT(request, { params }) {
     );
   }
 }
-
 export async function DELETE(request, { params }) {
   try {
     const { id } = await params;

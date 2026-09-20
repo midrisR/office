@@ -10,54 +10,63 @@ import {
   Space,
   message,
   Modal,
+  Select,
+  Flex,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "./markdown/editor";
-import { updateProductByID } from "@/services/productServices";
+
 const { TextArea } = Input;
 const IMAGE_BASE_URL = "/images/item/";
 
 const EditProductForm = ({ initialValues }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [select, setSelect] = useState({ brands: [], categories: [] }); // Set default object
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = async (values) => {
-    const formData = new FormData();
-
-    // Masukkan data teks biasa ke FormData
-    formData.append("name", values.name);
-    formData.append("tag", values.tag || "");
-    formData.append("description", values.description || "");
-    formData.append("published", values.published ? "true" : "false");
-    formData.append("metaDescription", values.metaDescription || "");
-    formData.append("metaKeywords", values.metaKeywords || "");
-
-    fileList.forEach((file) => {
-      if (file.originFileObj) {
-        // Ini adalah file baru yang di-upload user
-        formData.append("newImages", file.originFileObj);
-      } else if (file.url) {
-        // Ini adalah gambar lama yang dipertahankan.
-        // Kita ekstrak HANYA nama filenya saja dari URL
-        const fileName = file.url.split("/").pop();
-        formData.append("keptImages", fileName);
-      }
-    });
-    // Lakukan fetch ke API dengan method PUT
-    const response = await updateProductByID({
-      id: initialValues.id,
-      formData,
-    });
-
-    if (response.success) {
-      message.success("Produk berhasil diperbarui!");
-    } else {
-      message.error(errorData.error || "Gagal memperbarui produk.");
+  // --- FUNGSI FETCH DATA BRAND & KATEGORI ---
+  const getAllBrands = async () => {
+    try {
+      const response = await fetch("/api/brands");
+      if (!response.ok) throw new Error("Gagal mengambil data brand");
+      const { data } = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return [];
     }
   };
+
+  const getAllCategories = async () => {
+    try {
+      const response = await fetch("/api/categories");
+      if (!response.ok) throw new Error("Gagal mengambil data kategori");
+      const { data } = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const getAllData = async () => {
+    const [brands, categories] = await Promise.all([
+      getAllBrands(),
+      getAllCategories(),
+    ]);
+    return { brands, categories };
+  };
+
   useEffect(() => {
+    // Jalankan fetch data dropdown
+    getAllData().then((data) => {
+      setSelect(data);
+    });
+
+    // Set gambar awal dari initialValues
     if (initialValues && initialValues.images) {
-      const initialFileList = initialValues.images.map((image, index) => ({
+      const initialFileList = initialValues.images.map((image) => ({
         id: image.id,
         name: initialValues.name,
         status: "done",
@@ -65,50 +74,88 @@ const EditProductForm = ({ initialValues }) => {
       }));
       setFileList(initialFileList);
     }
-  }, []);
+  }, [initialValues]);
+
+  const onFinish = async (values) => {
+    setLoading(true);
+    const formData = new FormData();
+
+    formData.append("name", values.name);
+    formData.append("tag", values.tag || "");
+    formData.append("description", values.description || "");
+    formData.append("published", values.published ? "true" : "false");
+    formData.append("metaDescription", values.metaDescription || "");
+    formData.append("metaKeywords", values.metaKeywords || "");
+
+    // Pastikan menangkap nilai dari Select dan memasukkannya ke FormData
+    formData.append("categorieId", values.categorieId || "");
+    formData.append("brandId", values.brandId || "");
+
+    fileList.forEach((file) => {
+      if (file.originFileObj) {
+        formData.append("newImages", file.originFileObj);
+      } else if (file.url) {
+        const fileName = file.url.split("/").pop();
+        formData.append("keptImages", fileName);
+      }
+    });
+
+    try {
+      const response = await fetch(`/api/products/${initialValues.id}`, {
+        method: "PUT",
+        body: formData, // Jangan set header Content-Type secara manual, biarkan browser mengaturnya untuk FormData
+      });
+      if (response.ok) {
+        message.success("Produk berhasil diperbarui!");
+      } else {
+        message.error(response.error || "Gagal memperbarui produk.");
+      }
+    } catch (error) {
+      message.error("Terjadi kesalahan sistem.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEditorChange = ({ text }) => {
     form.setFieldsValue({ description: text });
   };
 
-  const onRemove = async (imageId) => {
+  const onRemove = async (file) => {
     return new Promise((resolve, reject) => {
       Modal.confirm({
         title: "Konfirmasi Hapus Gambar",
         content:
-          "Apakah Anda yakin ingin menghapus gambar ini? Gambar akan terhapus secara permanen.",
+          "Apakah Anda yakin ingin menghapus gambar ini secara permanen?",
         okText: "Ya, Hapus",
         okType: "danger",
         cancelText: "Batal",
         centered: true,
-        mask: { closable: true },
         onOk: async () => {
           try {
             if (file.url) {
-              const res = await fetch(`/api/images/${imageId.id}`, {
+              const res = await fetch(`/api/images/${file.id}`, {
                 method: "DELETE",
               });
-
-              if (!res.ok)
-                throw new Error("Gagal menghapus gambar dari server");
+              if (!res.ok) throw new Error("Gagal menghapus gambar");
               message.success("Gambar berhasil dihapus!");
             }
-            // Resolve akan menghapus gambar dari tampilan UI (fileList)
             resolve(true);
           } catch (error) {
             message.error(error.message);
-            reject(false); // Reject akan membatalkan penghapusan di UI
+            reject(false);
           }
         },
-        onCancel: () => {},
+        onCancel: () => reject(false),
       });
     });
   };
+
   return (
     <Form
       form={form}
       layout="vertical"
-      initialValues={initialValues}
+      initialValues={initialValues} // Nilai default akan mengisi Select otomatis berdasarkan brandId & categorieId
       onFinish={onFinish}
       style={{
         maxWidth: 800,
@@ -117,7 +164,6 @@ const EditProductForm = ({ initialValues }) => {
         borderRadius: "8px",
       }}
     >
-      {/* Komponen Tabs Ant Design */}
       <Form.Item
         name="name"
         label="Nama Produk"
@@ -130,13 +176,45 @@ const EditProductForm = ({ initialValues }) => {
         <Input placeholder="Contoh: Elekronik, Diskon, Sepatu" />
       </Form.Item>
 
+      {/* --- FLEX LAYOUT PERSIS SEPERTI CREATE PRODUCT --- */}
+      <Flex gap={12} vertical>
+        <Flex gap={8}>
+          <Form.Item name="categorieId" label="Kategori" style={{ flex: 1 }}>
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              placeholder="Pilih Kategori"
+              options={select.categories?.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+            />
+          </Form.Item>
+
+          <Form.Item name="brandId" label="Brand" style={{ flex: 1 }}>
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              placeholder="Pilih Brand"
+              options={select.brands?.map((brand) => ({
+                label: brand.name,
+                value: brand.id,
+              }))}
+            />
+          </Form.Item>
+        </Flex>
+      </Flex>
+
       <Form.Item name="description" label="Deskripsi Produk">
-        {/* <TextArea rows={4} placeholder="Tuliskan deskripsi lengkap produk" /> */}
-        <Markdown
-          // value={form.description}
-          handleEditorChange={handleEditorChange}
-          name="description"
-        />
+        <Markdown handleEditorChange={handleEditorChange} name="description" />
       </Form.Item>
 
       <Form.Item
@@ -146,13 +224,14 @@ const EditProductForm = ({ initialValues }) => {
       >
         <Switch checkedChildren="Published" unCheckedChildren="Draft" />
       </Form.Item>
+
       <Form.Item name="images" label="Gambar Produk" valuePropName="images">
         <Upload
           listType="picture-card"
           fileList={fileList}
           beforeUpload={() => false}
           onChange={({ fileList }) => setFileList(fileList)}
-          onRemove={(data) => onRemove(data)}
+          onRemove={onRemove}
         >
           <div>
             <PlusOutlined />
@@ -160,6 +239,7 @@ const EditProductForm = ({ initialValues }) => {
           </div>
         </Upload>
       </Form.Item>
+
       <Form.Item name="metaDescription" label="Meta Description (SEO)">
         <TextArea
           rows={2}
@@ -173,7 +253,7 @@ const EditProductForm = ({ initialValues }) => {
 
       <Form.Item label={null}>
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Simpan Perubahan
           </Button>
         </Space>
