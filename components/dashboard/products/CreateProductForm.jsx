@@ -106,7 +106,6 @@ const CreateProductForm = () => {
         body: formData, // Tanpa header Content-Type, browser yang akan mengaturnya
       });
       const response = await resutlt.json();
-      console.log(response);
 
       if (response.success) {
         message.success("Produk berhasil ditambahkan!");
@@ -114,7 +113,6 @@ const CreateProductForm = () => {
         setFileList([]); // Kosongkan daftar gambar
       } else {
         setValidate(response.error);
-        console.log("error");
       }
     } catch (error) {
       message.error("Terjadi kesalahan pada server.");

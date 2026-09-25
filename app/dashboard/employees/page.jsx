@@ -146,12 +146,9 @@ export default function EmployePage() {
         );
       } else {
         setError(result.error);
-        console.log("Error Validasi Backend:", result.error);
         message.error("Gagal menyimpan data.");
       }
     } catch (error) {
-      console.log(error);
-
       message.error("Terjadi kesalahan jaringan.");
     } finally {
       setSubmitLoading(false);

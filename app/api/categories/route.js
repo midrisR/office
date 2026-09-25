@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { categorieValidation } from "@/validation/categorieValidation";
+
 import fs from "fs";
 import path from "path";
 
@@ -51,10 +53,43 @@ export async function POST(request) {
     const formData = await request.formData();
 
     // Ambil data dari form
-    const name = formData.get("name");
     const published = formData.get("published") === "true";
-    const imageFile = formData.get("image"); // Hanya 1 file gambar
+    const name = formData.get("name");
 
+    // 1. Ambil HANYA SATU file menggunakan .get (bukan .getAll)
+    const imageFile = formData.get("image");
+    let imageForValidation;
+
+    // 2. Jika file ada dan merupakan objek (file fisik)
+    if (imageFile && typeof imageFile === "object" && imageFile.size > 0) {
+      imageForValidation = {
+        name: imageFile.name,
+        size: imageFile.size,
+        type: imageFile.type,
+      };
+    }
+
+    // 3. Susun body (Pastikan key-nya 'image', bukan 'images')
+    const body = {
+      name: name,
+      image: imageForValidation,
+    };
+    // 4. Validasi
+    const { error } = categorieValidation(body);
+    if (error) {
+      // Ubah error Joi menjadi object biasa agar bisa dikirim ke frontend
+      const formattedErrors = {};
+      error.details.forEach((detail) => {
+        formattedErrors[detail.path[0]] = detail.message;
+      });
+      return NextResponse.json(
+        {
+          message: "Validasi gagal",
+          error: formattedErrors,
+        },
+        { status: 422 },
+      );
+    }
     // TAHAP 1: Insert ke database HANYA data teks untuk mendapatkan ID
     const newCategory = await prisma.categories.create({
       data: {

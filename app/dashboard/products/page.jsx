@@ -10,10 +10,12 @@ import {
   message,
   Input,
   Flex,
+  Card,
 } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
+  PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
@@ -146,28 +148,27 @@ export default function Page() {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Flex
-        gap="medium"
-        justify="space-between"
-        align="center"
-        style={{ marginBottom: 16 }}
-      >
-        <Link href={`/dashboard/products/create`}>
-          <Button type="primary" style={{ marginBottom: 10 }}>
-            Tambah Produk
-          </Button>
-        </Link>
-        <Input
-          size="large"
-          placeholder="Cari nama produk..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          prefix={<SearchOutlined />}
-          allowClear
-          style={{ width: 300 }}
-        />
-      </Flex>
+    <Card
+      title="Manajemen Vendors"
+      extra={
+        <Flex gap="medium" justify="space-between" align="center">
+          <Link href={`/dashboard/products/create`}>
+            <Button type="primary" size="large" icon={<PlusOutlined />}>
+              Tambah Produk
+            </Button>
+          </Link>
+          <Input
+            size="large"
+            placeholder="Cari nama produk..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            prefix={<SearchOutlined />}
+            allowClear
+            style={{ width: 300 }}
+          />
+        </Flex>
+      }
+    >
       <Table
         rowKey="id"
         columns={columns}
@@ -177,6 +178,6 @@ export default function Page() {
         onChange={handleTableChange}
         bordered
       />
-    </div>
+    </Card>
   );
 }

@@ -213,7 +213,6 @@ export async function DELETE(request, { params }) {
     if (fs.existsSync(uploadDir)) {
       // Menghapus folder beserta seluruh file di dalamnya secara paksa (seperti rm -rf)
       fs.rmSync(uploadDir, { recursive: true, force: true });
-      console.log(`Folder fisik produk ${productId} berhasil dihapus.`);
     }
 
     // 3. Hapus data produk dari Database

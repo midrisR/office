@@ -8,7 +8,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [validation, setValidation] = useState([]);
   const isEditMode = !!initialData?.id;
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
     setLoading(true);
     const formData = new FormData();
 
-    formData.append("name", values.name);
+    formData.append("name", values.name || "");
     formData.append("published", values.published ? "true" : "false");
 
     const currentFile = fileList[0];
@@ -68,9 +68,10 @@ export default function CategoryForm({ initialData, onSuccess }) {
         message.success(
           `Kategori berhasil ${isEditMode ? "diperbarui" : "dibuat"}!`,
         );
-        if (onSuccess) onSuccess();
       } else {
-        message.error(result.error || "Gagal menyimpan data.");
+        setValidation(result.error);
+
+        // message.error(result.error || "Gagal menyimpan data.");
       }
     } catch (error) {
       message.error("Terjadi kesalahan jaringan.");
@@ -157,7 +158,13 @@ export default function CategoryForm({ initialData, onSuccess }) {
       onFinish={onFinish}
       initialValues={{ published: false }}
     >
-      <Form.Item name="name" label="Nama Kategori" rules={[{ required: true }]}>
+      <Form.Item
+        name="name"
+        label="Nama Kategori"
+        validateStatus={validation.name ? "error" : ""}
+        help={validation.name}
+        hasFeedback
+      >
         <Input placeholder="Masukkan nama kategori" />
       </Form.Item>
 
@@ -169,8 +176,14 @@ export default function CategoryForm({ initialData, onSuccess }) {
         <Switch checkedChildren="Published" unCheckedChildren="Draft" />
       </Form.Item>
 
-      <Form.Item label="Gambar Kategori">
+      <Form.Item
+        label="Gambar Kategori"
+        validateStatus={validation.image ? "error" : ""}
+        help={validation.image}
+        hasFeedback
+      >
         <Upload
+          name="image"
           listType="picture-card"
           fileList={fileList}
           onChange={({ fileList: newFileList }) =>

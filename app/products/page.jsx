@@ -10,7 +10,7 @@ async function fetchProducts({ page, limit, query }) {
     const result = await response.json();
     return result;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 }
 
@@ -24,7 +24,6 @@ export default async function Page({ searchParams }) {
     limit,
     query,
   });
-  console.log(products);
 
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">

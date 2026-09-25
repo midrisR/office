@@ -98,7 +98,6 @@ export async function POST(request) {
     };
 
     const { images, ...productData } = body;
-    console.log(body);
 
     const { error } = productValidation(body);
     if (error) {
