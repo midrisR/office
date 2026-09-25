@@ -1,5 +1,5 @@
 import CategorieCard from "@/components/categorieCard";
-export default async function Home() {
+export default async function Page() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}

@@ -39,10 +39,9 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 text-xl font-bold text-gray-900"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
-                P
+              <span className="flex items-center justify-center">
+                COMPANY NAME
               </span>
-              <span>Store</span>
             </Link>
           </div>
 
