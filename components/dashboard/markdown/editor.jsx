@@ -21,7 +21,7 @@ const MdEditor = dynamic(
   },
 );
 
-function Markdown({ value, handleEditorChange, name }) {
+function Markdown({ value, handleEditorChange, name, error }) {
   return (
     <div>
       <MdEditor
@@ -46,7 +46,9 @@ function Markdown({ value, handleEditorChange, name }) {
         style={{ height: "200px" }}
         renderHTML={(text) => <RenderMd markdown={text} />}
         onChange={handleEditorChange}
+        className={`border ${error && "border-red-600!"} mb-4`}
       />
+      {error && <span className="text-red-600">{error}</span>}
     </div>
   );
 }

@@ -120,7 +120,7 @@ export default function ProductDetail({ product }) {
       </div>
 
       {/* 2. TAB DETAILED INFORMASI (DESKRIPSI / SPESIFIKASI HTML) */}
-      <div className="mt-16 border-gray-200 pt-8">
+      <div className="mt-2 border-gray-200 pt-8">
         {/* Navigation Tabs */}
         <div className="flex gap-8 border-b border-gray-200 text-black">
           <p>Deskripsi Lengkap</p>

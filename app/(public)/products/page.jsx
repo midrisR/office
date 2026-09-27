@@ -1,6 +1,6 @@
 import ProductPagination from "@/components/ProductPagination";
 import ProductCard from "@/components/ProductCard";
-
+import Link from "next/link";
 async function fetchProducts({ page, limit, query }) {
   try {
     // Panggil API Backend
@@ -13,7 +13,16 @@ async function fetchProducts({ page, limit, query }) {
     return error;
   }
 }
-
+function slugify(text) {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Ganti spasi dengan -
+    .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
+    .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
+}
 export default async function Page({ searchParams }) {
   const params = await searchParams;
   const page = parseInt(params?.page || "1", 10);
@@ -35,7 +44,12 @@ export default async function Page({ searchParams }) {
         {/* Grid Layout: 1 Kolom (Mobile), 2 Kolom (Tablet), 3-4 Kolom (Desktop) */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {products.map((item) => (
-            <ProductCard key={item.id} product={item} />
+            <Link
+              href={`/products/${item.id}/${slugify(item.name)}`}
+              className="w-full block text-center text-xs font-medium text-white transition-colors"
+            >
+              <ProductCard key={item.id} product={item} />
+            </Link>
           ))}
         </div>
       </section>

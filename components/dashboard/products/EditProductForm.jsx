@@ -14,7 +14,7 @@ import {
   Flex,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import Markdown from "./markdown/editor";
+import Markdown from "../markdown/editor";
 
 const { TextArea } = Input;
 const IMAGE_BASE_URL = "/images/item/";

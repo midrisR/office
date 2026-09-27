@@ -1,6 +1,5 @@
 import Image from "next/image";
 const IMAGE_BASE_URL = "/images/item";
-import Link from "next/link";
 export default function ProductCard({ product }) {
   // Mengambil gambar pertama dari array images
 
@@ -50,13 +49,8 @@ export default function ProductCard({ product }) {
           {product.name}
         </h3>
         {/* Tombol Aksi */}
-        <div className="mt-4 pt-2">
-          <Link
-            href={`/products/${product.id}/${slugify(product.name)}`}
-            className="w-full block rounded-lg bg-blue-600 px-4 py-2 text-center text-xs font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
-          >
-            Lihat Detail
-          </Link>
+        <div className="mt-4 w-full block rounded-lg bg-blue-600 px-4 py-2 text-center text-xs font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800">
+          Lihat Detail
         </div>
       </div>
     </div>

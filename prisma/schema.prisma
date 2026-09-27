@@ -38,8 +38,8 @@ model products {
   id              Int      @id @default(autoincrement())
   name            String?  @db.VarChar(255)
   categorieId     Int?
-  description     String?  @db.Text
   brandId         Int?
+  description     String?  @db.Text
   tag             String?  @db.VarChar(255)
   metaDescription String?  @db.Text
   metaKeywords    String?  @db.VarChar(255)
@@ -110,6 +110,25 @@ model Roles {
   updatedAt DateTime   @updatedAt
   // Relasi balik (satu Role bisa dimiliki banyak Employes)
   employees  Employees[]
+}
+
+model Banners {
+  id          Int      @id @default(autoincrement())
+  title       String?
+  description String?
+  image       String   // Tambahkan kolom ini (wajib isi)
+  published   Boolean? @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Abouts {
+  id          Int      @id @default(autoincrement())
+  title       String?
+  description String?
+  published   Boolean? @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model verification_tokens {

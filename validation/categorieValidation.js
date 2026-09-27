@@ -35,7 +35,6 @@ export const categorieValidation = (data) => {
         "any.required": "Gambar kategori wajib diunggah.",
       }),
   });
-  s;
 
   return schema.validate(data, { abortEarly: false, allowUnknown: true });
 };

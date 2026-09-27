@@ -13,7 +13,7 @@ import {
   Select,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import Markdown from "./markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
+import Markdown from "../markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
 
 const { TextArea } = Input;
 

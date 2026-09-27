@@ -37,12 +37,13 @@ export default function CategoryPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  77;
 
   const fetchCategories = async (query = "", page = 1, limit = 10) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/categories?q=${query}&page=${page}&limit=${limit}`,
+        `/api/categories?q=${query}&page=${page}&limit=${limit}&isDashboard=true`,
       );
       const result = await response.json();
       setCategories(result.data);

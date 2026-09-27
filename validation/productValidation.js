@@ -8,41 +8,33 @@ const ALLOWED_IMAGE_FORMATS = [
 export function productValidation(data) {
   const schema = Joi.object({
     name: Joi.string().min(5).max(225).required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "name cannot be an empty field",
-      "string.min": "name is required of {#limit}",
-      "string.max":
-        "name length must be less than or equal to {#limit} characters long",
-      "any.required": "name is a required field",
+      "string.empty": "Nama tidak boleh kosong",
+      "any.required": "Nama wajib diisi",
     }),
     categorieId: Joi.number().integer().required().messages({
-      "number.base": "Kategori harus berupa angka",
+      "number.base": "Kategori wajib dipilih", // Ubah pesan ini
       "any.required": "Kategori wajib dipilih",
     }),
     brandId: Joi.number().integer().required().messages({
-      "number.base": "Brand harus berupa angka",
-      "any.required": "Brand wajib dipilih",
+      "number.base": "Kategori wajib dipilih", // Ubah pesan ini
+      "any.required": "Kategori wajib dipilih",
     }),
     description: Joi.string().required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "description cannot be an empty field",
-      "any.required": "description is a required field",
+      "string.empty": "Description tidak boleh kosong",
+      "any.required": "Description wajib diisi",
     }),
     metaDescription: Joi.string().required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "description cannot be an empty field",
-      "any.required": "description is a required field",
+      "string.empty": "Meta description tidak boleh kosong",
+      "any.required": "Meta description wajib diisi",
     }),
     metaKeywords: Joi.string().required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "keywords cannot be an empty field",
-      "any.required": "keywords is a required field",
+      "string.empty": "Meta keywords tidak boleh kosong",
+      "any.required": "Meta keywords wajib diisi",
     }),
     published: Joi.boolean().optional(),
     tag: Joi.string().required().messages({
-      "string.base": "should be a type of text",
-      "string.empty": "tag cannot be an empty field",
-      "any.required": "active is a required field",
+      "string.empty": "Tag tidak boleh kosong",
+      "any.required": "Tag wajib diisi",
     }),
     images: Joi.array()
       .items(
@@ -68,7 +60,7 @@ export function productValidation(data) {
       )
       .min(1)
       .messages({
-        "array.min": "image is a required field",
+        "array.min": "Image Wajib diisi",
       }),
   });
   return schema.validate(data, { abortEarly: false });

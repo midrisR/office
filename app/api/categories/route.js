@@ -9,8 +9,9 @@ import path from "path";
 // 1. GET: Mengambil Data Kategori (dengan Search & Pagination)
 // ==========================================
 export async function GET(request) {
+  const { searchParams } = new URL(request.url);
   try {
-    const { searchParams } = new URL(request.url);
+    const isDashboard = searchParams.get("isDashboard") === "true";
     const query = searchParams.get("q") || "";
     const page = parseInt(searchParams.get("page")) || 1;
     const limit = parseInt(searchParams.get("limit")) || 20;
@@ -19,7 +20,9 @@ export async function GET(request) {
     const whereCondition = {
       name: { contains: query },
     };
-
+    if (!isDashboard) {
+      whereCondition.published = true;
+    }
     const [categories, total] = await prisma.$transaction([
       prisma.categories.findMany({
         where: whereCondition,
@@ -76,9 +79,11 @@ export async function POST(request) {
     };
     // 4. Validasi
     const { error } = categorieValidation(body);
+    const formattedErrors = {};
+
     if (error) {
       // Ubah error Joi menjadi object biasa agar bisa dikirim ke frontend
-      const formattedErrors = {};
+
       error.details.forEach((detail) => {
         formattedErrors[detail.path[0]] = detail.message;
       });
