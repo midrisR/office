@@ -82,12 +82,19 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
           <Input placeholder="Masukkan judul" size="large" />
         </Form.Item>
 
-        <Markdown
-          handleEditorChange={handleEditorChange}
+        <Form.Item
           name="description"
-          error={validationErrors.description}
-        />
-
+          label="Deskripsi Produk"
+          help={validationErrors?.description}
+          validateStatus={validationErrors?.description && "error"}
+          hasFeedback
+        >
+          <Markdown
+            handleEditorChange={handleEditorChange}
+            name="description"
+            error={validationErrors.description}
+          />
+        </Form.Item>
         <Form.Item
           name="published"
           label="Status Publish"

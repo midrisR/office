@@ -2,6 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import EditProductForm from "@/components/dashboard/products/EditProductForm";
+import { message } from "antd";
 
 export default function Page() {
   const [product, setProduct] = useState([]);
@@ -17,7 +18,7 @@ export default function Page() {
       // Set data produk
       setProduct(data);
     } catch (error) {
-      console.error("Gagal fetch data:", error);
+      message.error("Gagal fetch data");
     } finally {
       setLoading(false);
     }

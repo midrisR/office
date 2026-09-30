@@ -50,7 +50,7 @@ export default function Page() {
         },
       });
     } catch (error) {
-      console.error("Gagal fetch data:", error);
+      message.error("Gagal fetch data");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,6 @@ export default function Page() {
         message.error("Gagal menghapus produk.");
       }
     } catch (error) {
-      console.error("Terjadi kesalahan:", error);
       message.error("Gagal terhubung ke server.");
     }
   };

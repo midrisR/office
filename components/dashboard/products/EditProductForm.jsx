@@ -33,7 +33,7 @@ const EditProductForm = ({ initialValues }) => {
       const { data } = await response.json();
       return data;
     } catch (error) {
-      console.error(error);
+      message.error("Gagal mengambil data brand");
       return [];
     }
   };
@@ -45,7 +45,7 @@ const EditProductForm = ({ initialValues }) => {
       const { data } = await response.json();
       return data;
     } catch (error) {
-      console.error(error);
+      message.error(error);
       return [];
     }
   };

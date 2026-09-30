@@ -46,11 +46,7 @@ export async function GET(request, { params }) {
       data: product,
     });
   } catch (error) {
-    console.error("Error fetching product detail:", error);
-    return NextResponse.json(
-      { error: "Gagal mengambil detail produk" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 
@@ -178,11 +174,7 @@ export async function PUT(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error updating product:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 export async function DELETE(request, { params }) {
@@ -227,7 +219,6 @@ export async function DELETE(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Gagal menghapus produk:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error.message },
       { status: 500 },
