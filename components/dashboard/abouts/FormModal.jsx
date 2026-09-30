@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Switch, message } from "antd";
-import Markdown from "../markdown/editor";
+import TiptapEditor from "@/components/tiptap/editor"; // Sesuaikan path sesuai lokasi file TiptapEditor Anda
+
 const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
         });
       } else {
         form.resetFields();
-        form.setFieldsValue({ published: false });
+        form.setFieldsValue({ published: false, description: "" });
       }
       setValidationErrors({});
     }
@@ -60,9 +61,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       setLoading(false);
     }
   };
-  const handleEditorChange = ({ text }) => {
-    form.setFieldsValue({ description: text });
-  };
+
   return (
     <Modal
       title={isEditMode ? "Edit Profil (About)" : "Tambah Profil (About)"}
@@ -70,7 +69,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       onCancel={onClose}
       footer={null}
       destroyOnHidden
-      width={800} // Membuat modal berukuran besar
+      width={800}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
@@ -84,17 +83,15 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
 
         <Form.Item
           name="description"
-          label="Deskripsi Produk"
+          label="Deskripsi"
           help={validationErrors?.description}
           validateStatus={validationErrors?.description && "error"}
           hasFeedback
         >
-          <Markdown
-            handleEditorChange={handleEditorChange}
-            name="description"
-            error={validationErrors.description}
-          />
+          {/* Ant Design Form akan otomatis mengalirkan prop 'value' dan 'onChange' ke TiptapEditor */}
+          <TiptapEditor />
         </Form.Item>
+
         <Form.Item
           name="published"
           label="Status Publish"
