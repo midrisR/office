@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Switch, message } from "antd";
-import Markdown from "../markdown/editor";
+import RichTextEditor from "@/components/editor/RichTextEditor";
+
 const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,21 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
   const onFinish = async (values) => {
     setLoading(true);
     setValidationErrors({});
+    let cleanedDescription = values.description;
 
+    // 2. Bersihkan kode kotor jika deskripsi tidak kosong
+    if (cleanedDescription) {
+      // Ganti semua &nbsp; menjadi spasi biasa
+      cleanedDescription = cleanedDescription.replace(/&nbsp;/g, " ");
+
+      // (Opsional) Hapus tag paragraf kosong <p></p> yang terlihat di gambar
+      cleanedDescription = cleanedDescription.replace(/<p><\/p>/g, "");
+    }
+
+    const payloadToSave = {
+      ...values,
+      description: cleanedDescription,
+    };
     const apiUrl = isEditMode ? `/api/abouts/${initialData.id}` : "/api/abouts";
     const apiMethod = isEditMode ? "PUT" : "POST";
 
@@ -37,7 +52,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       const response = await fetch(apiUrl, {
         method: apiMethod,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payloadToSave),
       });
 
       const result = await response.json();
@@ -60,8 +75,8 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       setLoading(false);
     }
   };
-  const handleEditorChange = ({ text }) => {
-    form.setFieldsValue({ description: text });
+  const handleEditorChange = (editor) => {
+    form.setFieldsValue({ description: editor });
   };
   return (
     <Modal
@@ -82,12 +97,19 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
           <Input placeholder="Masukkan judul" size="large" />
         </Form.Item>
 
-        <Markdown
-          handleEditorChange={handleEditorChange}
+        <Form.Item
           name="description"
-          error={validationErrors.description}
-        />
-
+          label="description"
+          validateStatus={validationErrors.description ? "error" : ""}
+          help={validationErrors.description}
+        >
+          {/* <QuillEditor /> */}
+          <RichTextEditor
+            onChange={handleEditorChange}
+            placeholder="Tulis isi artikel di sini..."
+            minHeight="400px"
+          />
+        </Form.Item>
         <Form.Item
           name="published"
           label="Status Publish"
