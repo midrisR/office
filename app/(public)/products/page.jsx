@@ -5,7 +5,7 @@ async function fetchProducts({ page, limit, query }) {
   try {
     // Panggil API Backend
     const response = await fetch(
-      `http://localhost:3000/api/products?q=${query}&page=${page}&limit=${limit}`,
+      `${process.env.BASE_URL}/api/products?q=${query}&page=${page}&limit=${limit}`,
     );
     const result = await response.json();
     return result;
@@ -45,6 +45,7 @@ export default async function Page({ searchParams }) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {products.map((item) => (
             <Link
+              key={item.id}
               href={`/products/${item.id}/${slugify(item.name)}`}
               className="w-full block text-center text-xs font-medium text-white transition-colors"
             >

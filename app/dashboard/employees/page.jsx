@@ -64,8 +64,6 @@ export default function EmployePage() {
         pagination: { current: page, pageSize: limit, total: result.total },
       });
     } catch (error) {
-      // Tambahkan console.error agar muncul di terminal VS Code Anda
-      console.error("API Employees Error:", error);
       message.error("Gagal menarik data.");
     } finally {
       setLoading(false);

@@ -3,7 +3,7 @@ import Image from "next/image";
 const IMAGE_BASE_URL = "/images/item-category";
 
 export default async function CategorieCard() {
-  const res = await fetch("http://localhost:3000/api/categories", {
+  const res = await fetch(`${process.env.BASE_URL}/api/categories`, {
     cache: "no-store",
   });
   const { data } = await res.json();
@@ -24,7 +24,7 @@ export default async function CategorieCard() {
           >
             <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-slate-100 mb-3">
               <Image
-                src={`${IMAGE_BASE_URL}/${category.id}/${category.image}`}
+                src={`${IMAGE_BASE_URL}/${category.image}`}
                 alt={category.name}
                 fill
                 sizes="(max-width: 768px) 45vw, 20vw"

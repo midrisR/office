@@ -54,11 +54,7 @@ export async function GET(request) {
       limit,
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return NextResponse.json(
-      { error: "Gagal mengambil data produk" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 

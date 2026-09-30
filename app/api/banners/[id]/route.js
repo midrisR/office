@@ -99,11 +99,7 @@ export async function PUT(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Gagal memperbarui data" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 
@@ -144,10 +140,6 @@ export async function DELETE(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Gagal menghapus data" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

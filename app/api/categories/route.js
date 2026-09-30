@@ -40,11 +40,7 @@ export async function GET(request) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Gagal mengambil data kategori:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 
@@ -153,7 +149,6 @@ export async function POST(request) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Error creating category:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error.message },
       { status: 500 },

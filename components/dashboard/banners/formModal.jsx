@@ -85,9 +85,6 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
         onClose();
         refreshData();
       } else if (response.status === 422) {
-        // Tangkap error dari Joi
-        console.log(result.error);
-
         setValidationErrors(result.error);
       } else {
         message.error(result.error || "Gagal menyimpan data");
@@ -98,7 +95,6 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       setLoading(false);
     }
   };
-  console.log(validationErrors.image);
 
   return (
     <Modal

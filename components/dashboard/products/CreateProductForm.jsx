@@ -33,7 +33,7 @@ const CreateProductForm = () => {
       const { data } = await response.json();
       return data; // Mengembalikan data brand
     } catch (error) {
-      console.error("Error fetching brands:", error);
+      message.error("Error fetching brands");
       return []; // Mengembalikan array kosong jika terjadi error
     }
   };
@@ -47,7 +47,7 @@ const CreateProductForm = () => {
       const { data } = await response.json();
       return data; // Mengembalikan data kategori
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      message.error("Error fetching categories");
       return []; // Mengembalikan array kosong jika terjadi error
     }
   };
@@ -65,7 +65,7 @@ const CreateProductForm = () => {
         setSelect(data); // Menyimpan data brand dan kategori ke state select
       })
       .catch((error) => {
-        console.error("Error fetching brands:", error);
+        message.error("Error fetching brands:");
       });
   }, []);
 
