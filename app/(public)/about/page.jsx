@@ -1,3 +1,20 @@
+<<<<<<< HEAD
+import Markdown from "react-markdown";
+import AboutDetail from "@/components/AboutDetail";
+async function getAbout() {
+  const res = await fetch(`${process.env.BASE_URL}/api/abouts`);
+  const data = await res.json();
+  return data;
+}
+
+export default async function Page() {
+  const { data } = await getAbout();
+
+  return (
+    <div className="max-w-4xl mx-auto text-base/8">
+      {/* <Markdown>{data?.[0].description}</Markdown> */}
+      <AboutDetail aboutData={data?.[0]} />
+=======
 export default async function Page() {
   return (
     <div className="max-w-4xl mx-auto py-24 mx-auto text-gray-800">
@@ -48,6 +65,7 @@ export default async function Page() {
           Melayani pengadaan dan perbaikan segala jenis Valve dan Accesories.
         </li>
       </ul>
+>>>>>>> 2e424394df13a777425261fb2a855b209f4bd35d
     </div>
   );
 }

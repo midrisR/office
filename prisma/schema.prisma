@@ -126,7 +126,11 @@ model Banners {
 model Abouts {
   id          Int      @id @default(autoincrement())
   title       String?
+<<<<<<< HEAD
+  description String? @db.Text
+=======
   description String?  @db.Text
+>>>>>>> 2e424394df13a777425261fb2a855b209f4bd35d
   published   Boolean? @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

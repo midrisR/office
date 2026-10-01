@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Markdown from "../markdown/editor";
-
+import RichTextEditor from "@/components/editor/RichTextEditor";
 const { TextArea } = Input;
 const IMAGE_BASE_URL = "/images/item/";
 
@@ -117,8 +117,8 @@ const EditProductForm = ({ initialValues }) => {
     }
   };
 
-  const handleEditorChange = ({ text }) => {
-    form.setFieldsValue({ description: text });
+  const handleEditorChange = (editor) => {
+    form.setFieldsValue({ description: editor });
   };
 
   const onRemove = async (file) => {
@@ -214,7 +214,12 @@ const EditProductForm = ({ initialValues }) => {
       </Flex>
 
       <Form.Item name="description" label="Deskripsi Produk">
-        <Markdown handleEditorChange={handleEditorChange} name="description" />
+        {/* <Markdown handleEditorChange={handleEditorChange} name="description" /> */}
+        <RichTextEditor
+          onChange={handleEditorChange}
+          placeholder="Tulis isi artikel di sini..."
+          minHeight="400px"
+        />
       </Form.Item>
 
       <Form.Item

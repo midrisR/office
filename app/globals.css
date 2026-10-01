@@ -1,4 +1,8 @@
+@import "../styles/_variables.scss";
+@import "../styles/_keyframe-animations.scss";
+
 @import "tailwindcss";
+@plugin '@tailwindcss/typography';
 
 :root {
   --background: #ffffff;
@@ -20,6 +24,9 @@
 }
 
 body {
+<<<<<<< HEAD
+=======
   color: var(--foreground);
+>>>>>>> 2e424394df13a777425261fb2a855b209f4bd35d
   font-family: Arial, Helvetica, sans-serif;
 }
