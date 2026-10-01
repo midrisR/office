@@ -10,19 +10,15 @@ import {
   Autosave,
   BlockQuote,
   Bold,
-  Code,
-  CodeBlock,
   Essentials,
   FindAndReplace,
   FontBackgroundColor,
   FontColor,
   FontFamily,
   FontSize,
-  GeneralHtmlSupport,
   Heading,
   Highlight,
   HorizontalLine,
-  HtmlEmbed,
   ImageBlock,
   ImageCaption,
   ImageInline,
@@ -98,19 +94,16 @@ export default function RichTextEditorInner({
       Base64UploadAdapter,
       BlockQuote,
       Bold,
-      Code,
-      CodeBlock,
+
       Essentials,
       FindAndReplace,
       FontBackgroundColor,
       FontColor,
       FontFamily,
       FontSize,
-      GeneralHtmlSupport,
       Heading,
       Highlight,
       HorizontalLine,
-      HtmlEmbed,
       ImageBlock,
       ImageCaption,
       ImageInline,
@@ -178,7 +171,6 @@ export default function RichTextEditorInner({
         "strikethrough",
         "subscript",
         "superscript",
-        "code",
         "removeFormat",
         "|",
         "alignment",
@@ -194,8 +186,6 @@ export default function RichTextEditorInner({
         "mediaEmbed",
         "insertTable",
         "blockQuote",
-        "codeBlock",
-        "htmlEmbed",
         "|",
         "horizontalLine",
         "pageBreak",
@@ -290,33 +280,10 @@ export default function RichTextEditorInner({
       },
     },
 
-    codeBlock: {
-      languages: [
-        { language: "plaintext", label: "Plain text" },
-        { language: "javascript", label: "JavaScript" },
-        { language: "typescript", label: "TypeScript" },
-        { language: "html", label: "HTML" },
-        { language: "css", label: "CSS" },
-        { language: "sql", label: "SQL" },
-        { language: "json", label: "JSON" },
-        { language: "bash", label: "Bash" },
-      ],
-    },
-
     // PENTING: jangan izinkan tag yang sudah dikelola fitur khusus
     // (Heading, Paragraph, List, Table, Link, Image, dst) lewat GHS —
     // itu bikin bentrok dan heading/list jadi tidak berfungsi.
     // Hanya izinkan tag "ekstra" yang tidak punya plugin sendiri.
-    htmlSupport: {
-      allow: [
-        {
-          name: /^(div|span|section|article|iframe|video|audio|source|style)$/,
-          attributes: true,
-          classes: true,
-          styles: true,
-        },
-      ],
-    },
 
     initialData: value,
   };
