@@ -18,7 +18,7 @@ export async function GET(request) {
         where: whereCondition,
         skip: skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: { id: "desc" },
         include: { roleData: true }, // Menarik relasi nama role
       }),
       prisma.employees.count({

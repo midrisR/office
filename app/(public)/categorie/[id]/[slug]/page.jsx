@@ -22,7 +22,7 @@ async function fetchProducts({ categoryId, page, limit, query }) {
 }
 
 export default async function CategoryPage({ params, searchParams }) {
-  const { id } = await params;
+  const { id, slug } = await params;
   const sParam = await searchParams;
 
   const page = parseInt(sParam?.page || "1", 10);
@@ -39,8 +39,8 @@ export default async function CategoryPage({ params, searchParams }) {
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <h2 className="mb-6 text-2xl font-bold tracking-tight text-gray-900">
-          Katalog Produk
+        <h2 className="mb-6 text-2xl font-bold capitalize tracking-tight text-gray-900">
+          Katalog Produk {slug}
         </h2>
 
         {/* Grid Layout: 1 Kolom (Mobile), 2 Kolom (Tablet), 3-4 Kolom (Desktop) */}

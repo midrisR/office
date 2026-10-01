@@ -30,25 +30,16 @@ export default function RolePage() {
   const [form] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const [tableParams, setTableParams] = useState({
-    pagination: { current: 1, pageSize: 10, total: 0 },
-  });
-
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const fetchRoles = async (query = "", page = 1, limit = 10) => {
+  const fetchRoles = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `/api/roles?q=${query}&page=${page}&limit=${limit}`,
-      );
+      const response = await fetch(`/api/roles`);
       const result = await response.json();
       setRoles(result.data);
-      setTableParams({
-        pagination: { current: page, pageSize: limit, total: result.total },
-      });
     } catch (error) {
       message.error("Gagal menarik data.");
     } finally {
@@ -58,25 +49,17 @@ export default function RolePage() {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      fetchRoles(searchText, 1, tableParams.pagination.pageSize);
+      fetchRoles();
     }, 500);
     return () => clearTimeout(delay);
   }, [searchText]);
-
-  const handleTableChange = (pagination) => {
-    fetchRoles(searchText, pagination.current, pagination.pageSize);
-  };
 
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`/api/roles/${id}`, { method: "DELETE" });
       if (res.ok) {
         message.success("Role dihapus.");
-        fetchRoles(
-          searchText,
-          tableParams.pagination.current,
-          tableParams.pagination.pageSize,
-        );
+        fetchRoles();
       } else {
         message.error("Gagal menghapus.");
       }
@@ -117,11 +100,7 @@ export default function RolePage() {
           `Role berhasil ${isEditMode ? "diperbarui" : "dibuat"}!`,
         );
         setIsModalOpen(false);
-        fetchRoles(
-          searchText,
-          tableParams.pagination.current,
-          tableParams.pagination.pageSize,
-        );
+        fetchRoles();
       } else {
         message.error("Gagal menyimpan data.");
       }
@@ -133,15 +112,6 @@ export default function RolePage() {
   };
 
   const columns = [
-    {
-      title: "No",
-      width: 70,
-      align: "center",
-      render: (_, __, i) =>
-        (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
-        i +
-        1,
-    },
     { title: "Nama Role", dataIndex: "role", key: "role" },
     {
       title: "Aksi",
@@ -206,8 +176,6 @@ export default function RolePage() {
         columns={columns}
         dataSource={roles}
         loading={loading}
-        pagination={tableParams.pagination}
-        onChange={handleTableChange}
         bordered
       />
 

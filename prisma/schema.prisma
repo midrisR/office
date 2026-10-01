@@ -84,15 +84,6 @@ model quotations {
   @@index([vendorId], map: "vendorId")
 }
 
-model users {
-  id        Int        @id @default(autoincrement())
-  name      String?    @db.VarChar(255)
-  email     String?    @db.VarChar(255)
-  password  String?    @db.VarChar(255)
-  createdAt  DateTime @default(now())
-  UpdatedAt DateTime @default(now()) @updatedAt
-}
-
 model Employees {
   id        Int      @id @default(autoincrement())
   name      String?
@@ -111,6 +102,19 @@ model Roles {
   updatedAt DateTime   @updatedAt
   // Relasi balik (satu Role bisa dimiliki banyak Employes)
   employees  Employees[]
+  users     Users[]
+}
+
+model Users {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  username  String   @unique @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  roleId    Int
+  role      Roles    @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Banners {
