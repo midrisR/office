@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Switch, message } from "antd";
-import TiptapEditor from "@/components/tiptap/editor"; // Sesuaikan path sesuai lokasi file TiptapEditor Anda
-
+import RichTextEditor from "@/components/editor/RichTextEditor";
 const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -61,7 +60,9 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       setLoading(false);
     }
   };
-
+  const handleEditorChange = (editor) => {
+    form.setFieldsValue({ description: editor });
+  };
   return (
     <Modal
       title={isEditMode ? "Edit Profil (About)" : "Tambah Profil (About)"}
@@ -69,7 +70,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       onCancel={onClose}
       footer={null}
       destroyOnHidden
-      width={800}
+      width={1200}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
@@ -88,8 +89,11 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
           validateStatus={validationErrors?.description && "error"}
           hasFeedback
         >
-          {/* Ant Design Form akan otomatis mengalirkan prop 'value' dan 'onChange' ke TiptapEditor */}
-          <TiptapEditor />
+          <RichTextEditor
+            onChange={handleEditorChange}
+            placeholder="Tulis isi artikel di sini..."
+            minHeight="400px"
+          />
         </Form.Item>
 
         <Form.Item
