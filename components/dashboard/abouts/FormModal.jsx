@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Switch, message } from "antd";
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf330a4b0e5ede4ff4f3b9b957725ca162e390a
 import RichTextEditor from "@/components/editor/RichTextEditor";
 
 const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
@@ -75,9 +79,17 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       setLoading(false);
     }
   };
+<<<<<<< HEAD
   const handleEditorChange = (editor) => {
     form.setFieldsValue({ description: editor });
   };
+=======
+
+  const handleEditorChange = (editor) => {
+    form.setFieldsValue({ description: editor });
+  };
+
+>>>>>>> daf330a4b0e5ede4ff4f3b9b957725ca162e390a
   return (
     <Modal
       title={isEditMode ? "Edit Profil (About)" : "Tambah Profil (About)"}
@@ -85,7 +97,7 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       onCancel={onClose}
       footer={null}
       destroyOnHidden
-      width={800}
+      width={1200}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
