@@ -2,18 +2,6 @@ import Image from "next/image";
 const IMAGE_BASE_URL = "/images/item";
 export default function ProductCard({ product }) {
   // Mengambil gambar pertama dari array images
-
-  function slugify(text) {
-    if (!text) return "";
-    return text
-      .toString()
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "-") // Ganti spasi dengan -
-      .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
-      .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
-  }
-
   const primaryImage = product?.images?.[0];
 
   return (
@@ -28,6 +16,7 @@ export default function ProductCard({ product }) {
             }
             alt={product.name}
             fill
+            loading="eager"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
           />

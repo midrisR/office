@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
     }
 
     // 2. Query ke database menggunakan findUnique
-    const product = await prisma.products.findUnique({
+    const product = await prisma.products.findMany({
       where: {
         id: productId,
       },

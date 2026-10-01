@@ -6,29 +6,41 @@ import path from "path";
 
 // GET: /api/Products
 export async function GET(request) {
+  // Ambil URL parameter
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") || "";
+
   try {
-    // 1. Ambil URL & query parameter ?page=X&limit=Y
-    const { searchParams } = new URL(request.url);
+    const categoryId = searchParams.get("categoryId");
     const isDashboard = searchParams.get("isDashboard") === "true";
+
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "1", 10);
+    // UBAH DISINI: Ubah default "1" menjadi angka yang lebih masuk akal, misal "20"
+    const limit = parseInt(searchParams.get("limit") || "20", 10);
     const skip = (page - 1) * limit;
+
+    // Buat kondisi pencarian
+    const queryCondition = {};
+    if (categoryId && categoryId !== "all") {
+      queryCondition.categorieId = parseInt(categoryId);
+    }
 
     const whereCondition = {
       name: {
         contains: query,
       },
+      ...queryCondition,
     };
+
     if (!isDashboard) {
       whereCondition.published = true;
     }
-    // 2. Query data produk dan total count sekaligus
+
+    // Query data produk dan total count sekaligus
     const [products, totalProduct] = await prisma.$transaction([
       prisma.products.findMany({
         where: whereCondition,
-        take: 50,
+        // HAPUS take: 50 yang ganda, cukup gunakan limit
         skip: skip,
         take: limit,
         orderBy: { createdAt: "desc" },
@@ -42,11 +54,11 @@ export async function GET(request) {
         },
       }),
       prisma.products.count({
-        where: whereCondition, // Hitung total data berdasarkan pencarian yang sama
+        where: whereCondition,
       }),
     ]);
 
-    // 3. Kembalikan response JSON
+    // Kembalikan response JSON
     return NextResponse.json({
       products,
       totalProduct,
@@ -54,10 +66,9 @@ export async function GET(request) {
       limit,
     });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
 export async function POST(request) {
   try {
     // 1. UBAH INI: Tangkap data sebagai FormData, bukan JSON

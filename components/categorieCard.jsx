@@ -1,7 +1,16 @@
 import Image from "next/image";
 
 const IMAGE_BASE_URL = "/images/item-category";
-
+function slugify(text) {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Ganti spasi dengan -
+    .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
+    .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
+}
 export default async function CategorieCard() {
   const res = await fetch(`${process.env.BASE_URL}/api/categories`, {
     cache: "no-store",
@@ -19,7 +28,7 @@ export default async function CategorieCard() {
         {data.map((category) => (
           <a
             key={category.id}
-            href={`/kategori/${category.id}`}
+            href={`/categorie/${category.id}/${slugify(category.name)}`}
             className="group relative flex flex-col items-center rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-300"
           >
             <div className="relative w-full aspect-square overflow-hidden rounded-lg bg-slate-100 mb-3">

@@ -3,6 +3,31 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs";
 import path from "path";
 
+export async function GET(request, { params }) {
+  try {
+    const { id } = await params;
+    const categoryId = parseInt(id);
+
+    const category = await prisma.categories.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      return NextResponse.json(
+        { error: "Kategori tidak ditemukan" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ data: category }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;

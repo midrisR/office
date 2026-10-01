@@ -1,5 +1,6 @@
 import CategorieCard from "@/components/categorieCard";
 import Banner from "@/components/Banner";
+
 export default async function Page() {
   return (
     <main className="min-h-screen bg-gray-50">
