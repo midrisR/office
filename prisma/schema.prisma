@@ -130,6 +130,9 @@ model Banners {
 model Abouts {
   id          Int      @id @default(autoincrement())
   title       String?
+  phone       String?
+  address     String?
+  email       String?
   description String? @db.Text
   published   Boolean? @default(false)
   createdAt   DateTime @default(now())

@@ -20,6 +20,9 @@ export async function PUT(request, { params }) {
       where: { id: parseInt(id) },
       data: {
         title: body.title,
+        email: body.email,
+        phone: body.phone,
+        address: body.address,
         description: body.description,
         published: body.published,
       },
@@ -30,6 +33,7 @@ export async function PUT(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Gagal memperbarui data" },
       { status: 500 },

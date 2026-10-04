@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import Image from "next/image";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -39,6 +39,15 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 text-xl font-bold text-gray-900"
             >
+              <div className="flex items-center">
+                <Image
+                  src="/logo.webp"
+                  alt="company name"
+                  width={32}
+                  height={32}
+                  className="mr-4"
+                />
+              </div>
               <span className="flex items-center justify-center">
                 COMPANY NAME
               </span>

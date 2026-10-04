@@ -3,17 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 const IMAGE_BASE_URL = "/images/item";
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-
+import DOMPurify from "isomorphic-dompurify";
 export default function ProductDetail({ product }) {
+  const htmlBersih = DOMPurify.sanitize(product.description);
   // State untuk gambar aktif di galeri
   const [selectedImage, setSelectedImage] = useState(
     product?.images?.[0] || null,
   );
-
-  // State untuk tab aktif (Deskripsi / Spesifikasi / Informasi)
-  const [activeTab, setActiveTab] = useState("description");
 
   // State kuantitas pembelian
   const [quantity, setQuantity] = useState(1);
@@ -128,10 +124,11 @@ export default function ProductDetail({ product }) {
 
         {/* Tab Content */}
         <div className="py-6">
-          <div className="prose max-w-none text-sm leading-relaxed text-gray-700">
-            <Markdown rehypePlugins={[rehypeRaw]}>
-              {product.description}
-            </Markdown>
+          <div className="prose max-w-none text-sm leading-relaxed">
+            <div
+              className="prose dark:prose-invert max-w-none text-gray-900"
+              dangerouslySetInnerHTML={{ __html: htmlBersih }}
+            />
           </div>
         </div>
       </div>

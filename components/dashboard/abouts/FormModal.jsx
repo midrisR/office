@@ -16,6 +16,9 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
       if (isEditMode) {
         form.setFieldsValue({
           title: initialData.title,
+          email: initialData.email,
+          phone: initialData.phone,
+          address: initialData.address,
           description: initialData.description,
           published: initialData.published,
         });
@@ -95,6 +98,30 @@ const FormModal = ({ isOpen, onClose, initialData, refreshData }) => {
           help={validationErrors.title}
         >
           <Input placeholder="Masukkan judul" size="large" />
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label="Email"
+          validateStatus={validationErrors.email ? "error" : ""}
+          help={validationErrors.email}
+        >
+          <Input placeholder="Masukkan email" size="large" />
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          label="Telepon"
+          validateStatus={validationErrors.phone ? "error" : ""}
+          help={validationErrors.phone}
+        >
+          <Input placeholder="Masukkan nomor telepon" size="large" />
+        </Form.Item>
+        <Form.Item
+          name="address"
+          label="Alamat"
+          validateStatus={validationErrors.address ? "error" : ""}
+          help={validationErrors.address}
+        >
+          <Input placeholder="Masukkan alamat" size="large" />
         </Form.Item>
 
         <Form.Item

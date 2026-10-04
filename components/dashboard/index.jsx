@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Layout, Menu } from "antd";
 const { Header, Content, Footer, Sider } = Layout;
 import items from "./items";
-
+import LogoutButton from "../LogoutButton";
 export default function Dashboard({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [key, setKey] = useState(["1"]);
@@ -16,8 +16,9 @@ export default function Dashboard({ children }) {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="min-h-8 rounded m-4 bg-gray-100 p-4">DASHBOARD</div>
-
+        <div className="logo text-center text-gray-800 text-lg font-bold py-4">
+          {collapsed ? "O" : "Dashboard"}
+        </div>
         <Menu
           selectedKeys={key}
           // openKeys={["1"]}
@@ -29,7 +30,14 @@ export default function Dashboard({ children }) {
         />
       </Sider>
       <Layout style={{ background: "#f4f6f9" }}>
-        <Header style={{ padding: 0, backgroundColor: "#ffffff" }} />
+        <Header
+          className="flex items-center justify-end"
+          style={{ padding: 0, backgroundColor: "#ffffff" }}
+        >
+          <div className="mr-4">
+            <LogoutButton />
+          </div>
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <div
             style={{

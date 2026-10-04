@@ -45,7 +45,6 @@ export default async function ProductDetailPage({ params }) {
   const { id } = await params;
   const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`);
   const { data } = await response.json();
-
   return (
     <main className="bg-white py-6">
       <ProductDetail product={data} />
