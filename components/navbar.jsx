@@ -40,16 +40,17 @@ export default function Navbar() {
               className="flex items-center gap-2 text-xl font-bold text-gray-900"
             >
               <div className="flex items-center">
+                {" "}
                 <Image
                   src="/logo.webp"
-                  alt="company name"
+                  alt="TRIPPLE RICH PRODUCTION"
                   width={32}
                   height={32}
                   className="mr-4"
                 />
               </div>
               <span className="flex items-center justify-center">
-                COMPANY NAME
+                TRIPPLE RICH PRODUCTION
               </span>
             </Link>
           </div>

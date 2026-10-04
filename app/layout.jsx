@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Your Company Name",
-  description: "Your Company Name",
+  title: "Your TRIPPLE RICH PRODUCTION",
+  description: "Your TRIPPLE RICH PRODUCTION",
 };
 
 export default function RootLayout({ children }) {
