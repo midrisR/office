@@ -9,10 +9,8 @@ export async function GET() {
     });
     return NextResponse.json({ data: abouts }, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Gagal mengambil data" },
-      { status: 500 },
-    );
+    console.log("Error fetching abouts:", error);
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 

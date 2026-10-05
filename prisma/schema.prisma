@@ -84,7 +84,7 @@ model quotations {
   @@index([vendorId], map: "vendorId")
 }
 
-model Employees {
+model employees {
   id        Int      @id @default(autoincrement())
   name      String?
   email     String?
@@ -92,32 +92,32 @@ model Employees {
   role_id   Int?     // Mengganti 'role String?' menjadi foreign key (Int)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  roleData  Roles?   @relation(fields: [role_id], references: [id])
+  roleData  roles?   @relation(fields: [role_id], references: [id])
 }
 
-model Roles {
+model roles {
   id        Int        @id @default(autoincrement())
   role      String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   // Relasi balik (satu Role bisa dimiliki banyak Employes)
-  employees  Employees[]
-  users     Users[]
+  employees  employees[]
+  users     users[]
 }
 
-model Users {
+model users {
   id        Int      @id @default(autoincrement())
   name      String?  @db.VarChar(255)
   username  String   @unique @db.VarChar(255)
   email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
   roleId    Int
-  role      Roles    @relation(fields: [roleId], references: [id])
+  role      roles    @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
+} 
 
-model Banners {
+model banners {
   id          Int      @id @default(autoincrement())
   title       String?
   description String?
@@ -127,7 +127,7 @@ model Banners {
   updatedAt   DateTime @updatedAt
 }
 
-model Abouts {
+model abouts {
   id          Int      @id @default(autoincrement())
   title       String?
   phone       String?
