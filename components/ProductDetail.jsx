@@ -31,7 +31,7 @@ export default function ProductDetail({ product }) {
           <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-sm">
             {selectedImage ? (
               <Image
-                src={`${process.env.IMAGE_BASE_URL}/item/${product.id}/${selectedImage.name}`}
+                src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/item/${product.id}/${selectedImage.name}`}
                 alt={product.name}
                 fill
                 priority
@@ -64,7 +64,7 @@ export default function ProductDetail({ product }) {
                   >
                     <Image
                       loading="eager"
-                      src={`${IMAGE_BASE_URL}/${product.id}/${img.name}`}
+                      src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/item/${product.id}/${img.name}`}
                       alt={`${product.name} thumbnail ${index + 1}`}
                       fill
                       sizes="80px"
