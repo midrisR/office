@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    turbopack: {
-      resolveAlias: {
-        canvas: false,
-      },
-    },
-  },
+  /* config options here */
 };
+
 export default nextConfig;
