@@ -1,6 +1,7 @@
 import ProductPagination from "@/components/ProductPagination";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import { prisma } from "@/lib/prisma"; // 1. Tambahkan import Prisma Client
 
 function slugify(text) {
   if (!text) return "";
@@ -8,18 +9,12 @@ function slugify(text) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-") // Ganti spasi dengan -
-    .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
-    .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-");
 }
 
-async function fetchProducts({ categoryId, page, limit, query }) {
-  const response = await fetch(
-    `${process.env.BASE_URL}/api/products?q=${query}&page=${page}&limit=${limit}&categoryId=${categoryId}`,
-  );
-  const result = await response.json();
-  return result;
-}
+// 2. Fungsi fetchProducts DIHAPUS karena tidak lagi diperlukan
 
 export default async function CategoryPage({ params, searchParams }) {
   const { id, slug } = await params;
@@ -29,12 +24,38 @@ export default async function CategoryPage({ params, searchParams }) {
   const limit = parseInt(sParam?.limit || "20", 10);
   const query = sParam?.q || "";
 
-  const { products, totalProduct } = await fetchProducts({
-    page,
-    limit,
-    query,
-    categoryId: id,
-  });
+  // 3. Logika skip untuk paginasi (diambil dari route_3.js)
+  const skip = (page - 1) * limit;
+
+  // 4. Kondisi pencarian (diambil dari route_3.js)
+  const whereCondition = {
+    name: {
+      contains: query,
+    },
+    categorieId: parseInt(id), // Filter berdasarkan kategori dari URL
+    published: true, // Hanya tampilkan produk yang dipublikasi
+  };
+
+  // 5. Eksekusi database langsung menggunakan Prisma
+  const [products, totalProduct] = await prisma.$transaction([
+    prisma.products.findMany({
+      where: whereCondition,
+      skip: skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        images: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    }),
+    prisma.products.count({
+      where: whereCondition,
+    }),
+  ]);
 
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">

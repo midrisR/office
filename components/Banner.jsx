@@ -1,15 +1,14 @@
 import { Carousel } from "antd";
 import Image from "next/image";
-async function getBbanners() {
-  const response = await fetch(
-    `${process.env.BASE_URL}/api/banners?published=true`,
-  );
-  const result = await response.json();
-  return result;
-}
+import prisma from "@/lib/prisma";
 
 export default async function Banner() {
-  const { data } = await getBbanners();
+  const banners = await prisma.banners.findMany({
+    where: {
+      published: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <Carousel
@@ -20,7 +19,7 @@ export default async function Banner() {
         arrowSize: "132",
       }}
     >
-      {data.map(({ id, image }) => (
+      {banners.map(({ id, image }) => (
         <Image
           className="rounded-2xl"
           key={id}

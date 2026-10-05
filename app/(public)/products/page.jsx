@@ -1,18 +1,8 @@
 import ProductPagination from "@/components/ProductPagination";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
-async function fetchProducts({ page, limit, query }) {
-  try {
-    // Panggil API Backend
-    const response = await fetch(
-      `${process.env.BASE_URL}/api/products?q=${query}&page=${page}&limit=${limit}`,
-    );
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    return error;
-  }
-}
+import { prisma } from "@/lib/prisma"; // 1. Import Prisma Client Anda
+
 function slugify(text) {
   if (!text) return "";
   return text
@@ -23,16 +13,44 @@ function slugify(text) {
     .replace(/[^\w\-]+/g, "") // Hapus karakter khusus non-alphanumeric
     .replace(/\-\-+/g, "-"); // Ganti multiple - dengan single -
 }
+
 export default async function Page({ searchParams }) {
   const params = await searchParams;
   const page = parseInt(params?.page || "1", 10);
   const limit = parseInt(params?.limit || "20", 10);
   const query = params?.q || "";
-  const { products, totalProduct } = await fetchProducts({
-    page,
-    limit,
-    query,
-  });
+
+  // 2. Hitung offset (skip) untuk paginasi
+  const skip = (page - 1) * limit;
+
+  // 3. Buat kondisi pencarian (disalin dari route.js)
+  const whereCondition = {
+    name: {
+      contains: query,
+    },
+    published: true, // Pastikan hanya menampilkan produk yang dipublish
+  };
+
+  // 4. Panggil database langsung menggunakan Prisma
+  const [products, totalProduct] = await prisma.$transaction([
+    prisma.products.findMany({
+      where: whereCondition,
+      skip: skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        images: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    }),
+    prisma.products.count({
+      where: whereCondition,
+    }),
+  ]);
 
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">
