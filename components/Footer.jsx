@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-async function fetchEmployees() {
-  const response = await fetch(`${process.env.BASE_URL}/api/employees`);
-  const result = await response.json();
-  return result.data;
-}
+
 export default async function Footer() {
-  const employees = await fetchEmployees();
+  const employees = await prisma.employees.findMany({
+    where: {
+      published: true,
+    },
+    orderBy: { id: "desc" },
+    include: { roleData: true }, // Menarik relasi nama role
+  });
 
   return (
     <footer className="border-t border-gray-800 bg-gray-900 text-gray-300">

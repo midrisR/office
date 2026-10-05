@@ -20,6 +20,7 @@ export function employessVAlidation(data) {
       "string.empty": "Email tidak boleh kosong",
       "any.required": "Email wajib diisi",
     }),
+    published: Joi.boolean().optional(),
   });
   return schema.validate(data, { abortEarly: false });
 }

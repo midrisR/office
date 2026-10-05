@@ -12,6 +12,8 @@ import {
   Modal,
   Form,
   Select,
+  Switch,
+  Tag,
 } from "antd";
 import {
   EditOutlined,
@@ -172,6 +174,16 @@ export default function EmployePage() {
       render: (_, record) => record.roleData?.role || "-", // Menampilkan nama role dari relasi
     },
     {
+      title: "Status",
+      dataIndex: "published",
+      key: "published",
+      render: (published) => (
+        <Tag color={published ? "green" : "default"}>
+          {published ? "Published" : "Draft"}
+        </Tag>
+      ),
+    },
+    {
       title: "Aksi",
       width: 150,
       align: "center",
@@ -292,6 +304,13 @@ export default function EmployePage() {
                   </Select.Option>
                 ))}
               </Select>
+            </Form.Item>
+            <Form.Item
+              name="published"
+              label="Status Publish"
+              valuePropName="checked"
+            >
+              <Switch checkedChildren="Published" unCheckedChildren="Draft" />
             </Form.Item>
             <Form.Item style={{ marginTop: 24, marginBottom: 0 }}>
               <Button

@@ -90,6 +90,7 @@ model employees {
   email     String?
   phone     String?
   role_id   Int?     // Mengganti 'role String?' menjadi foreign key (Int)
+  published       Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   roleData  roles?   @relation(fields: [role_id], references: [id])

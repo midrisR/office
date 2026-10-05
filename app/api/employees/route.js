@@ -38,7 +38,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, phone, role_id } = body;
+    const { name, email, phone, role_id, published } = body;
     const { error } = employessVAlidation(body);
     if (error) {
       // Siapkan object kosong
@@ -56,6 +56,7 @@ export async function POST(request) {
         name,
         email,
         phone,
+        published,
         role_id: role_id ? parseInt(role_id) : null,
       },
     });

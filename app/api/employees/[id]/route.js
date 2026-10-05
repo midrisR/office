@@ -49,6 +49,7 @@ export async function PUT(request, { params }) {
         email,
         phone,
         role_id: role_id ? parseInt(role_id) : null,
+        published: body.published,
       },
     });
 
