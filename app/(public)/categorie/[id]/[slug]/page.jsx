@@ -35,7 +35,7 @@ export default async function CategoryPage({ params, searchParams }) {
     query,
     categoryId: id,
   });
-  console.log(products);
+
   return (
     <div style={{ padding: "24px" }} className="bg-gray-50">
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

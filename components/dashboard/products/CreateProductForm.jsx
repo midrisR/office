@@ -12,9 +12,8 @@ import {
   Space,
   Select,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import Markdown from "../markdown/editor"; // Sesuaikan path ini dengan struktur folder Anda
-
+import { PlusOutlined } from "@ant-design/icons"; // Sesuaikan path ini dengan struktur folder Anda
+import RichTextEditor from "@/components/editor/RichTextEditor";
 const { TextArea } = Input;
 
 const CreateProductForm = () => {
@@ -70,8 +69,8 @@ const CreateProductForm = () => {
   }, []);
 
   // Sinkronisasi data dari komponen Markdown ke Form Ant Design
-  const handleEditorChange = ({ text }) => {
-    form.setFieldsValue({ description: text });
+  const handleEditorChange = (editor) => {
+    form.setFieldsValue({ description: editor });
   };
 
   // Fungsi saat form disubmit
@@ -209,7 +208,7 @@ const CreateProductForm = () => {
         validateStatus={validate?.["description"] && "error"}
         hasFeedback
       >
-        <Markdown handleEditorChange={handleEditorChange} name="description" />
+        <RichTextEditor onChange={handleEditorChange} name="description" />
       </Form.Item>
 
       <Form.Item

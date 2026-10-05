@@ -66,6 +66,7 @@ export async function GET(request) {
       limit,
     });
   } catch (error) {
+    logger.error("Error fetching products:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -29,7 +29,7 @@ export default async function Banner() {
           height={600}
           sizes="100vw"
           loading="eager"
-          alt="TRIPPLE RICH PRODUCTION"
+          alt="TRIPLE RICH PRODUCTION"
         />
       ))}
     </Carousel>

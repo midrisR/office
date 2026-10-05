@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Your TRIPPLE RICH PRODUCTION",
-  description: "Your TRIPPLE RICH PRODUCTION",
-  keywords: "Your TRIPPLE RICH PRODUCTION, Your TRIPPLE RICH PRODUCTION",
+  title: "Your TRIPLE RICH PRODUCTION",
+  description: "Your TRIPLE RICH PRODUCTION",
+  keywords: "Your TRIPLE RICH PRODUCTION, Your TRIPLE RICH PRODUCTION",
 };
 
 export default function RootLayout({ children }) {

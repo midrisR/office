@@ -45,6 +45,7 @@ export async function POST(request) {
       { status: 201 },
     );
   } catch (error) {
+    console.error("Error creating about:", error);
     return NextResponse.json(
       { error: "Terjadi kesalahan server" },
       { status: 500 },

@@ -33,7 +33,6 @@ export async function PUT(request, { params }) {
       { status: 200 },
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { error: "Gagal memperbarui data" },
       { status: 500 },

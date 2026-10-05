@@ -43,14 +43,14 @@ export default function Navbar() {
                 {" "}
                 <Image
                   src="/logo.webp"
-                  alt="TRIPPLE RICH PRODUCTION"
+                  alt="TRIPLE RICH PRODUCTION"
                   width={32}
                   height={32}
                   className="mr-4"
                 />
               </div>
               <span className="flex items-center justify-center">
-                TRIPPLE RICH PRODUCTION
+                TRIPLE RICH PRODUCTION
               </span>
             </Link>
           </div>

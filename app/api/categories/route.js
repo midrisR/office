@@ -40,6 +40,7 @@ export async function GET(request) {
       { status: 200 },
     );
   } catch (error) {
+    console.log("Error fetching categories:", error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
