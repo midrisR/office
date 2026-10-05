@@ -4,8 +4,6 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { ClassicEditor, Essentials, Paragraph, Bold, Italic } from "ckeditor5";
 
-import "ckeditor5/ckeditor5.css";
-
 function CustomEditor() {
   return (
     <CKEditor

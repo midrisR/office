@@ -71,7 +71,6 @@ import {
 
 import "ckeditor5/ckeditor5.css";
 import "./editor.css";
-
 export default function RichTextEditorInner({
   value = "",
   onChange,
