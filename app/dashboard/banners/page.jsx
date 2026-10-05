@@ -78,7 +78,7 @@ const BannersPage = () => {
       render: (image) => (
         <Image
           width={100}
-          src={`/images/banners/${image}`}
+          src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/banners/${image}`}
           alt="banner"
           style={{ objectFit: "cover", borderRadius: "6px" }}
           fallback="/placeholder-image.png" // Opsional: Tambahkan gambar placeholder jika gagal dimuat

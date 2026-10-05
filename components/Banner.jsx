@@ -23,7 +23,7 @@ export default async function Banner() {
         <Image
           className="rounded-2xl"
           key={id}
-          src={`${process.env.IMAGE_BASE_URL}/images/banners/${image}`}
+          src={`${process.env.IMAGE_BASE_URL}/banners/${image}`}
           width={1200} // Angka bebas, hanya sebagai acuan rasio asli gambar
           height={600}
           sizes="100vw"

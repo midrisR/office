@@ -25,7 +25,7 @@ export default function CategoryForm({ initialData, onSuccess }) {
               uid: "-1",
               name: initialData.image,
               status: "done",
-              url: `/images/item-category/${initialData.id}/${initialData.image}`,
+              url: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/categorie/${initialData.id}/${initialData.image}`,
             },
           ]);
         }

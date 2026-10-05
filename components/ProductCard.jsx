@@ -1,5 +1,4 @@
 import Image from "next/image";
-const IMAGE_BASE_URL = "/images/item";
 export default function ProductCard({ product }) {
   // Mengambil gambar pertama dari array images
   const primaryImage = product?.images?.[0];
@@ -11,7 +10,7 @@ export default function ProductCard({ product }) {
         {primaryImage ? (
           <Image
             src={
-              `${IMAGE_BASE_URL}/${product.id}/${primaryImage.name}` ||
+              `${process.env.IMAGE_BASE_URL}/item/${product.id}/${primaryImage.name}` ||
               "/600x400.svg"
             }
             alt={product.name}

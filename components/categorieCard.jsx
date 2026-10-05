@@ -1,8 +1,6 @@
 import Image from "next/image";
 import { prisma } from "@/lib/prisma"; // 1. Tambahkan import Prisma Client
 
-const IMAGE_BASE_URL = "/images/item-category";
-
 function slugify(text) {
   if (!text) return "";
   return text
@@ -42,7 +40,7 @@ export default async function CategorieCard() {
           >
             <div className="relative mb-3 aspect-square w-full overflow-hidden rounded-lg bg-slate-100">
               <Image
-                src={`${IMAGE_BASE_URL}/${category.image}`}
+                src={`${process.env.IMAGE_BASE_URL}/categorie/${category.image}`}
                 alt={category.name}
                 fill
                 sizes="(max-width: 768px) 45vw, 20vw"

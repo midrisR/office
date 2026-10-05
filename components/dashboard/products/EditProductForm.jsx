@@ -16,7 +16,6 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import RichTextEditor from "@/components/editor/RichTextEditor";
 const { TextArea } = Input;
-const IMAGE_BASE_URL = "/images/item/";
 
 const EditProductForm = ({ initialValues }) => {
   const [form] = Form.useForm();
@@ -69,7 +68,7 @@ const EditProductForm = ({ initialValues }) => {
         id: image.id,
         name: initialValues.name,
         status: "done",
-        url: `${IMAGE_BASE_URL}/${initialValues.id}/${image.name}`,
+        url: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/item/${initialValues.id}/${image.name}`,
       }));
       setFileList(initialFileList);
     }
@@ -149,6 +148,7 @@ const EditProductForm = ({ initialValues }) => {
       });
     });
   };
+  console.log(fileList);
 
   return (
     <Form

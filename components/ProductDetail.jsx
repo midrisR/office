@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-const IMAGE_BASE_URL = "/images/item";
+
 import DOMPurify from "isomorphic-dompurify";
 export default function ProductDetail({ product }) {
   const htmlBersih = DOMPurify.sanitize(product.description);
@@ -31,7 +31,7 @@ export default function ProductDetail({ product }) {
           <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-sm">
             {selectedImage ? (
               <Image
-                src={`${IMAGE_BASE_URL}/${product.id}/${selectedImage.name}`}
+                src={`${process.env.IMAGE_BASE_URL}/item/${product.id}/${selectedImage.name}`}
                 alt={product.name}
                 fill
                 priority
