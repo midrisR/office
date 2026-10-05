@@ -11,7 +11,11 @@ export default async function Page() {
   return (
     <div className="max-w-4xl mx-auto text-base/8">
       {/* <Markdown>{data?.[0].description}</Markdown> */}
-      <AboutDetail aboutData={data?.[0]} />
+      {data.length > 0 ? (
+        <AboutDetail description={data[0].description} />
+      ) : (
+        <p>No about data available.</p>
+      )}
     </div>
   );
 }
