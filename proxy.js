@@ -2,7 +2,8 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
+  // Nama fungsi diubah dari middleware menjadi proxy
+  function proxy(req) {
     // Di sini Anda bisa menambahkan logika Role jika mau.
     // Contoh: req.nextauth.token.role === "marketing"
     return NextResponse.next();

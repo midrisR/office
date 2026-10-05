@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: {
-      bodySizeLimit: "5mb",
+    turbopack: {
+      resolveAlias: {
+        canvas: false,
+      },
     },
   },
 };
-
 export default nextConfig;
